@@ -4,7 +4,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 
 
-
 export default function App() {
   return (
     <SafeAreaProvider style={styles.container}>
