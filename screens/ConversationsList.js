@@ -6,8 +6,8 @@ const ConversationsList = (props) => {
 
   return <View style={styles.container}>
 
-    <Text>Contacts Screen</Text>
-    <Button title="Conversation Settings" onPress={() => props.navigation.navigate('ConversationSettings')} />
+    <Text>Conversations List Screen</Text>
+    <Button title="Go to conversation" onPress={() => props.navigation.navigate('Conversation')} />
   </View>
 
 }

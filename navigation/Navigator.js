@@ -3,13 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet } from 'react-native';
 import HomeNavigator from './HomeNavigator';
 
-
-
-
-
-
-
-
 const Navigator = (props) => {
 
   return (

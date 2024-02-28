@@ -1,20 +1,23 @@
+// Library imports
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import Settings from "../screens/Settings";
-import ConversationsList from "../screens/ConversationsList";
-import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet } from 'react-native';
+import { createStackNavigator } from "@react-navigation/stack";
+import { StyleSheet } from "react-native";
 
 // Local imports
-import ConversationSettings from '../screens/ConversationSettings';
+import ConversationSettings from "../screens/ConversationSettings";
+import Settings from "../screens/Settings";
+import ConversationsList from "../screens/ConversationsList";
+import Conversation from "../screens/Conversation";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// Bottom Tab Navigator
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={{ headerTitle: "" }}>
-      <Tab.Screen
+      <Tab.Screen // Conversations List Screen
         name="ChatList"
         component={ConversationsList}
         options={{
@@ -26,7 +29,7 @@ const TabNavigator = () => {
           },
         }}
       />
-      <Tab.Screen
+      <Tab.Screen // Settings Screen
         name="Settings"
         component={Settings}
         options={{
@@ -45,7 +48,7 @@ const TabNavigator = () => {
 const HomeNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen
+      <Stack.Screen // Home Screen
         name="Conversations"
         component={TabNavigator}
         options={{
@@ -53,7 +56,18 @@ const HomeNavigator = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen
+      <Stack.Screen // Conversation Screen
+        name="Conversation"
+        component={Conversation}
+        options={{
+          gestureEnabled: true,
+          headerTitle: "",
+          headerBackTitleVisible: true,
+          headerBackTitle: "Back",
+          headerBackTitleStyle: { fontFamily: "light", fontSize: 18 },
+        }}
+      />
+      <Stack.Screen // Conversation Settings Screen
         name="ConversationSettings"
         component={ConversationSettings}
         options={{
@@ -73,14 +87,14 @@ const HomeNavigator = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   label: {
     fontFamily: "light",
     fontSize: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 export default HomeNavigator;
