@@ -20,7 +20,7 @@ import backgroundImage from "../assets/images/Conversation_Background_Image.png"
 import colours from "../constants/colours";
 
 // Chat Contacts Screen
-const Conversation = (props) => {
+const Conversation = props => {
   const [messageText, setMessageText] = useState("");
 
   const sendMessage = useCallback(() => {
@@ -29,12 +29,12 @@ const Conversation = (props) => {
 
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
-      <KeyboardAvoidingView // Ensure keyboard does not cover input
+      <KeyboardAvoidingView /* Ensure keyboard does not cover input */
         style={styles.typingScreen}
         behavior={Platform.OS === "ios" ? "padding" : undefined} // No padding necessary for Android
         keyboardVerticalOffset={100}
       >
-        <ImageBackground // Conversation Background Image
+        <ImageBackground /* Conversation Background Image */
           source={backgroundImage}
           style={styles.backgroundImage}
         ></ImageBackground>
