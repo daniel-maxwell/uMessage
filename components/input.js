@@ -9,7 +9,7 @@ import colours from "../constants/colours";
 const Input = (props) => {
   return (
     <View style={styles.container}>
-      <Text>{props.label}</Text>
+      <Text style={styles.label}>{props.label}</Text>
       <View style={styles.inputContainer}>
         {
           props.icon &&
@@ -19,8 +19,16 @@ const Input = (props) => {
             style={styles.icon}
           />
         }
-        <TextInput />
+        <TextInput
+          style={styles.input}
+        />
       </View>
+      {
+        props.errorText &&
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{props.errorText}</Text>
+        </View>
+      }
     </View>
   );
 };
@@ -29,6 +37,13 @@ const Input = (props) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+  },
+  label: {
+    marginVertical: 8,
+    fontFamily: 'bold',
+    letterSpacing: 0.3,
+    fontSize: 18,
+    color: colours.textColour,
   },
   inputContainer: {
     width: "100%",
@@ -45,9 +60,21 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: colours.black,
+    fontFamily: 'medium',
+    letterSpacing: 0.3,
+    color: colours.textColour,
+    paddingTop: 0,
   },
+  errorContainer: {
+    marginVertical: 5,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 13,
+    fontFamily: 'medium',
+    letterSpacing: 0.3,
+  },
+
 });
 
 export default Input;
