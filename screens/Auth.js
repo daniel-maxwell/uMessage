@@ -17,7 +17,7 @@ import PageContainer from "../components/PageContainer";
 import logo from "../assets/images/logo.png";
 import SignUp from "../components/SignUp";
 import SignIn from "../components/SignIn";
-import colours from "../constants/colours";
+import colours from "../constants/Colours";
 
 // Login / Authentication Screen
 const Auth = (props) => {
@@ -49,7 +49,7 @@ const Auth = (props) => {
               style={styles.changeFormContainer}
             >
               <Text style={styles.changeFormLink}>
-                {`Switch to ${isSignedUp ? "Sign In" : "Sign Up"}`}
+                {`Switch to ${isSignedUp ? "Sign Up" : "Sign In"}`}
               </Text>
             </TouchableOpacity>
           </KeyboardAvoidingView>

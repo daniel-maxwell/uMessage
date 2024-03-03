@@ -3,10 +3,15 @@ import { View, StyleSheet, TextInput, Text } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 // Local Imports
-import colours from "../constants/colours";
+import colours from "../constants/Colours";
 
 // Login Input Component
 const Input = (props) => {
+
+  const onChangeText = (text) => {
+    props.onInputChanged(props.id, text);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{props.label}</Text>
@@ -20,13 +25,15 @@ const Input = (props) => {
           />
         }
         <TextInput
+          { ...props }
           style={styles.input}
+          onChangeText={onChangeText}
         />
       </View>
       {
         props.errorText &&
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{props.errorText}</Text>
+          <Text style={styles.errorText}>{props.errorText[0]}</Text>
         </View>
       }
     </View>

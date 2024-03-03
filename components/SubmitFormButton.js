@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, Text } from 'react-native';
-import colours from '../constants/colours';
+import colours from '../constants/Colours';
 
 const SubmitForm = (props) => {
 

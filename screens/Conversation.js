@@ -17,7 +17,7 @@ import { Feather } from "@expo/vector-icons";
 
 // Local Imports
 import backgroundImage from "../assets/images/Conversation_Background_Image.png";
-import colours from "../constants/colours";
+import colours from "../constants/Colours";
 
 // Chat Contacts Screen
 const Conversation = props => {
