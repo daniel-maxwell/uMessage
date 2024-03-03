@@ -1,11 +1,16 @@
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+// Library Imports
+import { View, StyleSheet} from 'react-native';
 
+// Page Container Component
 const PageContainer = props => {
-  return <View>
-    {props.children}
-  </View>
+  return (
+    <View style={styles.container}>
+      {props.children}
+    </View>
+  );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,

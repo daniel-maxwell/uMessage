@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 
 // Local imports
 import HomeNavigator from './HomeNavigator';
-import Login from '../screens/Login';
+import SignUp from '../screens/Auth';
 
 const Navigator = (props) => {
 
@@ -14,7 +14,7 @@ const Navigator = (props) => {
   return (
     <NavigationContainer>
       { isLoggedIn && <HomeNavigator /> }
-      { !isLoggedIn && <Login /> }
+      { !isLoggedIn && <SignUp /> }
     </NavigationContainer>
   );
 }
