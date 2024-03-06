@@ -1,5 +1,6 @@
 // Library Imports
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useState, useEffect } from "react";
+import { ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // Local Imports
@@ -29,6 +30,8 @@ const defaultFormState = {
 
 // Sign Up Form Component
 const SignUp = (props) => {
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
   const [formState, dispatchFormState] = useReducer(
     reducerFn,
     defaultFormState
@@ -47,14 +50,35 @@ const SignUp = (props) => {
     [dispatchFormState]
   );
 
+  useEffect(() => {
+    if (error) {
+      Alert.alert("Woops! An error occurred.", error, [{ text: "OK" }]);
+    }
+  }, [error]);
+
   // Handler for form submission
-  const submitFormHandler = () => {
-    signUp(
-      formState.values.firstName,
-      formState.values.lastName,
-      formState.values.email,
-      formState.values.password
-    );
+  const submitFormHandler = async () => {
+    setLoading(true);
+    if (!formState || !formState.inputValues) {
+      console.error("Form state or inputValues are undefined.");
+      setLoading(false);
+      return;
+    }
+
+    const { firstName, lastName, email, password } = formState.inputValues;
+
+    if (!firstName || !lastName || !email || !password) {
+      console.error("One or more form fields are empty.");
+      setLoading(false);
+      return;
+    }
+    try {
+      await signUp(firstName, lastName, email, password);
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
 
   return (
@@ -105,12 +129,20 @@ const SignUp = (props) => {
         iconSize={20}
         iconColor={colours.blue}
       />
-      <SubmitFormButton /* Submit */
-        title="Sign Up"
-        style={{ marginTop: 20 }}
-        onPress={() => submitFormHandler()}
-        disabled={!formState.formValid}
-      />
+      {loading ? (    /* Loading indicator if submit has been pressed */
+        <ActivityIndicator
+          size="small"
+          color={colours.primary}
+          style={{ marginTop: 10 }}
+        />
+      ) : (
+        <SubmitFormButton /* Submit */
+          title="Sign Up"
+          style={{ marginTop: 20 }}
+          onPress={() => submitFormHandler()}
+          disabled={!formState.formValid}
+        />
+      )}
     </>
   );
 };

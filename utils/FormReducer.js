@@ -1,13 +1,10 @@
-
-
-
 // Reducer function for form state
 export const reducerFn = (state, action) => {
   const { validationRes, inputId, inputValue } = action;
 
   // Update the input field's value
   const updatedInputValues = {
-    ...state.values,
+    ...state.inputValues,
     [inputId]: inputValue
   };
 
@@ -16,7 +13,6 @@ export const reducerFn = (state, action) => {
     ...state.inputValidState,
     [inputId]: validationRes
   };
-
 
   let updatedFormValid = true;
 
@@ -28,6 +24,7 @@ export const reducerFn = (state, action) => {
     }
   }
 
+  // Update the form's valid state
   return {
     inputValues: updatedInputValues,
     inputValidState: updatedInputValidState,

@@ -1,17 +1,17 @@
-// Libraries
-import { Button, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useEffect, useCallback } from 'react';
-import * as LoadingScreen from 'expo-splash-screen';
-import * as Fonts from 'expo-font';
-import 'react-native-gesture-handler';
+// Library imports
+import { Button, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useState, useEffect, useCallback } from "react";
+import * as LoadingScreen from "expo-splash-screen";
+import * as Fonts from "expo-font";
+import "react-native-gesture-handler";
+import { Provider } from "react-redux";
 
 // Local imports
-import Navigator from './navigation/Navigator';
-
+import Navigator from "./navigation/Navigator";
+import { store } from "./store/store";
 
 LoadingScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding
-
 
 export default function App() {
   const [appLoaded, setAppLoaded] = useState(false);
@@ -21,27 +21,25 @@ export default function App() {
     const prepare = async () => {
       try {
         await Fonts.loadAsync({
-          "black": require("./assets/fonts/NotoSans-Black.ttf"),
-          "blackItalic": require("./assets/fonts/NotoSans-BlackItalic.ttf"),
-          "bold": require("./assets/fonts/NotoSans-Bold.ttf"),
-          "boldItalic": require("./assets/fonts/NotoSans-BoldItalic.ttf"),
-          "extraBold": require("./assets/fonts/NotoSans-ExtraBold.ttf"),
-          "extraBoldItalic": require("./assets/fonts/NotoSans-ExtraBoldItalic.ttf"),
-          "extraLight": require("./assets/fonts/NotoSans-ExtraLight.ttf"),
-          "extraLightItalic": require("./assets/fonts/NotoSans-ExtraLightItalic.ttf"),
-          "italic": require("./assets/fonts/NotoSans-Italic.ttf"),
-          "light": require("./assets/fonts/NotoSans-Light.ttf"),
-          "lightItalic": require("./assets/fonts/NotoSans-LightItalic.ttf"),
-          "medium": require("./assets/fonts/NotoSans-Medium.ttf"),
-          "mediumItalic": require("./assets/fonts/NotoSans-MediumItalic.ttf")
+          black: require("./assets/fonts/NotoSans-Black.ttf"),
+          blackItalic: require("./assets/fonts/NotoSans-BlackItalic.ttf"),
+          bold: require("./assets/fonts/NotoSans-Bold.ttf"),
+          boldItalic: require("./assets/fonts/NotoSans-BoldItalic.ttf"),
+          extraBold: require("./assets/fonts/NotoSans-ExtraBold.ttf"),
+          extraBoldItalic: require("./assets/fonts/NotoSans-ExtraBoldItalic.ttf"),
+          extraLight: require("./assets/fonts/NotoSans-ExtraLight.ttf"),
+          extraLightItalic: require("./assets/fonts/NotoSans-ExtraLightItalic.ttf"),
+          italic: require("./assets/fonts/NotoSans-Italic.ttf"),
+          light: require("./assets/fonts/NotoSans-Light.ttf"),
+          lightItalic: require("./assets/fonts/NotoSans-LightItalic.ttf"),
+          medium: require("./assets/fonts/NotoSans-Medium.ttf"),
+          mediumItalic: require("./assets/fonts/NotoSans-MediumItalic.ttf"),
         });
-      }
-      // If there's an error, log it
-      catch (error) {
-        console.log('Error loading fonts', error);
-      }
-      // Finally, set the app state as 'loaded'
-      finally {
+      } catch (error) {
+        // If there's an error, log it
+        console.log("Error loading fonts", error);
+      } finally {
+        // Finally, set the app state as 'loaded'
         setAppLoaded(true);
       }
     };
@@ -49,14 +47,12 @@ export default function App() {
     prepare();
   }, []);
 
-
   // Hide the splash screen when the app is ready
-  const onLayoutChange = useCallback( async () => {
+  const onLayoutChange = useCallback(async () => {
     if (appLoaded) {
       await LoadingScreen.hideAsync();
     }
   }, [appLoaded]);
-
 
   // If the app hasn't finished loading, don't render anything
   if (!appLoaded) {
@@ -64,24 +60,24 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider style={styles.container} onLayout={onLayoutChange}>
-      <Navigator />
-
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider style={styles.container} onLayout={onLayoutChange}>
+        <Navigator />
+      </SafeAreaProvider>
+    </Provider>
   );
 }
-
 
 // Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   label: {
     fontFamily: "light",
     fontSize: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
