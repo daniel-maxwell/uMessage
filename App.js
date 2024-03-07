@@ -1,17 +1,19 @@
 // Library imports
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect, useCallback } from "react";
 import * as LoadingScreen from "expo-splash-screen";
 import * as Fonts from "expo-font";
 import "react-native-gesture-handler";
 import { Provider } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Local imports
 import Navigator from "./navigation/Navigator";
 import { store } from "./store/store";
 
 LoadingScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding
+ AsyncStorage.clear(); // Clear the async storage (forces log out)
 
 export default function App() {
   const [appLoaded, setAppLoaded] = useState(false);

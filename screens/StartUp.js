@@ -21,6 +21,7 @@ const StartUp = () => {
     const attemptAuth = async () => {
       // Get stored user data if it exists
       const storedUserData = await AsyncStorage.getItem("userData");
+
       if (!storedUserData) {
         dispatch(setAutoLoginAttempted());
         return;
@@ -29,6 +30,7 @@ const StartUp = () => {
       // Check if token is expired
       const { token, uid, expiryTime: expiryStr } = JSON.parse(storedUserData);
       const expiryTime = new Date(expiryStr);
+
       if (expiryTime <= new Date() || !token || !uid) {
         console.log("Token expired");
         dispatch(setAutoLoginAttempted());

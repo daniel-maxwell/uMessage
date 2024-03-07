@@ -60,30 +60,38 @@ const SignUp = (props) => {
   }, [error]);
 
   // Handler for form submission
-  const submitFormHandler = async () => {
-    setLoading(true);
+  const submitFormHandler = useCallback(async () => {
+    setLoading(true); // Enter loading state
+
+    // Check if form state or input values are undefined
     if (!formState || !formState.inputValues) {
       console.error("Form state or inputValues are undefined.");
       setLoading(false);
       return;
     }
 
+    // Destructure input values
     const { firstName, lastName, email, password } = formState.inputValues;
 
+    // Check if one or more fields are empty
     if (!firstName || !lastName || !email || !password) {
       console.error("One or more form fields are empty.");
       setLoading(false);
       return;
     }
+    // Attempt to sign up
     try {
-      dispatch(signUp(firstName, lastName, email, password));
       setError(null);
-    } catch (error) {
+      await dispatch(signUp(firstName, lastName, email, password));
+    }
+    // If error occurs, set error message and exit loading state
+    catch (error) {
       setError(error.message);
       setLoading(false);
     }
-  };
+  }, [dispatch, formState]);
 
+  // Render form fields and submit button
   return (
     <>
       <Input /* First Name field */
@@ -132,7 +140,8 @@ const SignUp = (props) => {
         iconSize={20}
         iconColor={colours.blue}
       />
-      {loading ? (    /* Loading indicator if submit has been pressed */
+      {
+        loading ? (    /* Loading indicator if submit has been pressed */
         <ActivityIndicator
           size="small"
           color={colours.primary}
@@ -142,7 +151,7 @@ const SignUp = (props) => {
         <SubmitFormButton /* Submit */
           title="Sign Up"
           style={{ marginTop: 20 }}
-          onPress={() => submitFormHandler()}
+          onPress={submitFormHandler}
           disabled={!formState.formValid}
         />
       )}

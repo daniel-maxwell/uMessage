@@ -1,3 +1,4 @@
+// Library Imports
 import { createSlice } from "@reduxjs/toolkit"
 
 // Generates a slice object with the initial state,
@@ -14,13 +15,15 @@ const authSlice = createSlice({
       const { payload } = action;
       state.token = payload.token;
       state.userData = payload.userData;
-      console.log(state)
-    },
-    setAutoLoginAttempted: (state, action) => {
       state.autoLoginAttempted = true;
     },
     logout: (state, action) => {
-      state.user = null;
+      state.userData = null;
+      state.token = null;
+      state.autoLoginAttempted = false;
+    },
+    setAutoLoginAttempted: (state, action) => {
+      state.autoLoginAttempted = true;
     },
   },
 });

@@ -13,13 +13,13 @@ const Navigator = (props) => {
   const isLoggedIn = useSelector(
     (state) => state.auth.token !== "" && state.auth.token !== null
   );
-  const autoAuthAttempted = useSelector((state) => state.auth.autoAuthAttempted);
+  const autoLoginAttempted = useSelector((state) => state.auth.autoLoginAttempted);
 
   return (
     <NavigationContainer>
       {isLoggedIn && <HomeNavigator />}
-      {!isLoggedIn && autoAuthAttempted && <Auth />}
-      {!isLoggedIn && !autoAuthAttempted && <StartUp />}
+      {!isLoggedIn && autoLoginAttempted && <Auth />}
+      {!isLoggedIn && !autoLoginAttempted && <StartUp />}
     </NavigationContainer>
   );
 };
