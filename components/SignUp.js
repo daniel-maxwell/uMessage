@@ -2,6 +2,7 @@
 import React, { useCallback, useReducer, useState, useEffect } from "react";
 import { ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
 
 // Local Imports
 import Input from "./Input";
@@ -36,6 +37,7 @@ const SignUp = (props) => {
     reducerFn,
     defaultFormState
   );
+  const dispatch = useDispatch();
 
   // Handler for form field changes
   const formFieldChangedHandler = useCallback(
@@ -50,6 +52,7 @@ const SignUp = (props) => {
     [dispatchFormState]
   );
 
+  // If error occurs, display an on-screen alert
   useEffect(() => {
     if (error) {
       Alert.alert("Woops! An error occurred.", error, [{ text: "OK" }]);
@@ -73,7 +76,7 @@ const SignUp = (props) => {
       return;
     }
     try {
-      await signUp(firstName, lastName, email, password);
+      dispatch(signUp(firstName, lastName, email, password));
       setError(null);
     } catch (error) {
       setError(error.message);
