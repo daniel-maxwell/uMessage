@@ -18,7 +18,7 @@ const testMode = true;
 // All form fields are initially invalid
 const defaultFormState = {
   values: {
-    email: testMode ? "test@example.com" : "",
+    email: testMode ? "testuser@example.com" : "",
     password: testMode ? "testpass" : "",
   },
   inputValidState: {

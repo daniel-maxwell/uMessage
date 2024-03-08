@@ -16,7 +16,7 @@ const Stack = createStackNavigator();
 // Bottom Tab Navigator
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerTitle: "" }}>
+    <Tab.Navigator screenOptions={{ headerTitle: "", headerShadowVisible: false}}>
       <Tab.Screen // Conversations List Screen
         name="ChatList"
         component={ConversationsList}

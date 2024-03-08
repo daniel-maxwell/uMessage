@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 
 // Local imports
 import HomeNavigator from "./HomeNavigator";
-import SignUp from "../screens/Auth";
 import Auth from "../screens/Auth";
 import StartUp from "../screens/StartUp";
 

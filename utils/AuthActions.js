@@ -112,7 +112,7 @@ export const signIn = (email, password) => {
 // Creates a user in the database, or throws an error
 const createUser = async (firstName, lastName, email, uid) => {
   const fullName = `${firstName} ${lastName}`.toLowerCase();
-  const userDetails = {
+  const userData = {
     fullName,
     firstName,
     lastName,
@@ -123,8 +123,8 @@ const createUser = async (firstName, lastName, email, uid) => {
 
   const databaseRef = ref(getDatabase());
   const childRef = child(databaseRef, `users/${uid}`);
-  await set(databaseRef, userDetails);
-  return userDetails;
+  await set(childRef, userData);
+  return userData;
 };
 
 // Saves user data to async storage

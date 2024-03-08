@@ -1,5 +1,6 @@
 // Library Imports
 import { View, StyleSheet, TextInput, Text } from "react-native";
+import { useState } from "react";
 
 // Local Imports
 import colours from "../constants/Colours";
@@ -7,7 +8,10 @@ import colours from "../constants/Colours";
 // Login Input Component
 const Input = (props) => {
 
+  const [value, setValue] = useState(props.initialValue || "");
+
   const onChangeText = (text) => {
+    setValue(text);
     props.onInputChanged(props.id, text);
   };
 
@@ -25,6 +29,7 @@ const Input = (props) => {
         }
         <TextInput
           { ...props }
+          value={value}
           style={styles.input}
           onChangeText={onChangeText}
         />

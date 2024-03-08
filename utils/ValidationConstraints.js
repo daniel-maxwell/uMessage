@@ -16,6 +16,7 @@ export const validateString = (identifier, value) => {
     };
   }
 
+  // Validate the value against the constraints
   res = validate(
     { [identifier]: value },
     { [identifier]: constraints }
@@ -35,6 +36,7 @@ export const validateEmail = (identifier, value) => {
     constraints.email = true;
   }
 
+  // Validate the value against the constraints
   res = validate(
     { [identifier]: value },
     { [identifier]: constraints }
@@ -58,9 +60,33 @@ export const validatePassword = (identifier, value) => {
     };
   }
 
+  // Validate the value against the constraints
   res = validate(
     { [identifier]: value },
     { [identifier]: constraints  }
+  );
+
+  return res && res[identifier];
+};
+
+// Validation Constraints for Authentication Forms
+export const validateLength = (identifier, value, minL, maxL, allowEmpty) => {
+  // Controls whether empty string is allowed
+  const constraints = {
+        presence: { allowEmpty }
+    };
+
+  // If value not empty or undefined, length must be between minL and maxL
+  if (!allowEmpty || value !== "") {
+    constraints.length = {}
+    minL ? constraints.length.minimum = minL : constraints.length.minimum = 0;
+    maxL ? constraints.length.maximum = maxL : constraints.length.maximum = 100;
+  }
+
+  // Validate the value against the constraints
+  res = validate(
+    { [identifier]: value },
+    { [identifier]: constraints }
   );
 
   return res && res[identifier];

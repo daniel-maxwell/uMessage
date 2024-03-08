@@ -7,6 +7,7 @@ import { getFirebase } from "./FirebaseIntegration";
 // Fetches user data from the database, or throws an error
 export const fetchUserData = async (uid) => {
   try {
+
     // Get user data from database
     const app = getFirebase();
     const databaseRef = ref(getDatabase(app));
