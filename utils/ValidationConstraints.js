@@ -31,10 +31,8 @@ export const validateEmail = (identifier, value) => {
   };
 
   /* If value not empty or undefined, format must be letters only */
-  if (value !== "" && value !== undefined) {
-    constraints.email = {
-      message: "must be a valid email address",
-    };
+  if (value !== "") {
+    constraints.email = true;
   }
 
   res = validate(

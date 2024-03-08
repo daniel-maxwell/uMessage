@@ -4,7 +4,7 @@ export const reducerFn = (state, action) => {
 
   // Update the input field's value
   const updatedInputValues = {
-    ...state.inputValues,
+    ...state.values, // state.values
     [inputId]: inputValue
   };
 
@@ -26,7 +26,7 @@ export const reducerFn = (state, action) => {
 
   // Update the form's valid state
   return {
-    inputValues: updatedInputValues,
+    values: updatedInputValues,
     inputValidState: updatedInputValidState,
     formValid: updatedFormValid
   };

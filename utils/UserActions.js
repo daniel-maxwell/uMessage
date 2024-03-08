@@ -13,14 +13,6 @@ export const fetchUserData = async (uid) => {
     const userRef = child(databaseRef, `users/${uid}`);
     const userSnapshot = await get(userRef);
 
-    /*
-    // Return user data if it exists, else throw error
-    if (userSnapshot.exists()) {
-      return userSnapshot.val();
-    } else {
-      throw new Error("User not found.");
-    }
-    */
     return userSnapshot.val();
   } catch (error) {
     throw new Error("Woops! Something went wrong.");

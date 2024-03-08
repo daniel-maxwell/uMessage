@@ -64,14 +64,14 @@ const SignUp = (props) => {
     setLoading(true); // Enter loading state
 
     // Check if form state or input values are undefined
-    if (!formState || !formState.inputValues) {
-      console.error("Form state or inputValues are undefined.");
+    if (!formState || !formState.values) {
+      console.error("Form state or values are undefined.");
       setLoading(false);
       return;
     }
 
     // Destructure input values
-    const { firstName, lastName, email, password } = formState.inputValues;
+    const { firstName, lastName, email, password } = formState.values;
 
     // Check if one or more fields are empty
     if (!firstName || !lastName || !email || !password) {

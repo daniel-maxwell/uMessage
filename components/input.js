@@ -1,6 +1,5 @@
 // Library Imports
 import { View, StyleSheet, TextInput, Text } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
 
 // Local Imports
 import colours from "../constants/Colours";

@@ -13,7 +13,7 @@ import { reducerFn } from "../utils/FormReducer";
 import { signIn } from "../utils/AuthActions";
 
 // Test mode auto fills form fields to sign in with test user account
-const testMode = false;
+const testMode = true;
 
 // All form fields are initially invalid
 const defaultFormState = {
@@ -29,14 +29,14 @@ const defaultFormState = {
 };
 
 // Sign In Form Component
-const SignIn = () => {
+const SignIn = props => {
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
   const [formState, dispatchFormState] = useReducer(
     reducerFn,
     defaultFormState
   );
 
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState(null); // Error state
   const dispatch = useDispatch();
 
   // Handler for form field changes
@@ -64,9 +64,9 @@ const SignIn = () => {
     // Enter loading state
     setLoading(true);
 
-    // Check if form state or inputValues are undefined
-    if (!formState || !formState.values) {
-      console.error("Form state or inputValues are undefined.");
+    // Check if form state or values are undefined
+    if (!formState) {
+      console.error("Form state or values are undefined.");
       setLoading(false);
       return;
     }
@@ -98,7 +98,7 @@ const SignIn = () => {
       <Input /* E-mail field */
         label="E-mail"
         id="email"
-        value={formState.values["email"]}
+        value={formState.values.email}
         keyboardType="email-address"
         onInputChanged={formFieldChangedHandler}
         errorText={formState.inputValidState["email"]}
@@ -110,7 +110,7 @@ const SignIn = () => {
       <Input /* Password field */
         label="Password"
         id="password"
-        value={formState.values["password"]}
+        value={formState.values.password}
         secureTextEntry={true} // Hides the text
         onInputChanged={formFieldChangedHandler}
         errorText={formState.inputValidState["password"]}

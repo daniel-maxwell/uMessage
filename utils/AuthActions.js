@@ -95,7 +95,6 @@ export const signIn = (email, password) => {
 
     } catch (error) {
       // Set error message based on error code and throw
-      console.log(error);
       const errorCode = error.code;
       let message = "Woops! Something went wrong.";
       if (errorCode === "auth/email-already-in-use") {

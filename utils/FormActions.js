@@ -2,7 +2,6 @@ import { validateEmail, validatePassword, validateString } from "./ValidationCon
 
 // Handles routing of form validation based on input type
 export const validateFormEntry = (inputIdentifier, inputValue) => {
-  console.log(`Validating ${inputIdentifier} with value ${inputValue}`);
   if (inputIdentifier === "firstName" || inputIdentifier === "lastName") {
     return validateString(inputIdentifier, inputValue)
   } else if (inputIdentifier === "email") {

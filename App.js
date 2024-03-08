@@ -13,7 +13,7 @@ import Navigator from "./navigation/Navigator";
 import { store } from "./store/store";
 
 LoadingScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding
- AsyncStorage.clear(); // Clear the async storage (forces log out)
+AsyncStorage.clear(); // Clear the async storage (forces log out)
 
 export default function App() {
   const [appLoaded, setAppLoaded] = useState(false);
