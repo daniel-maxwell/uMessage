@@ -98,7 +98,7 @@ const SignIn = props => {
       <Input /* E-mail field */
         label="E-mail"
         id="email"
-        value={formState.values.email}
+        initialValue={formState.values.email}
         keyboardType="email-address"
         onInputChanged={formFieldChangedHandler}
         errorText={formState.inputValidState["email"]}
@@ -110,7 +110,7 @@ const SignIn = props => {
       <Input /* Password field */
         label="Password"
         id="password"
-        value={formState.values.password}
+        initialValue={formState.values.password}
         secureTextEntry={true} // Hides the text
         onInputChanged={formFieldChangedHandler}
         errorText={formState.inputValidState["password"]}

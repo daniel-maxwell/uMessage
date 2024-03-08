@@ -8,7 +8,7 @@ import colours from "../constants/Colours";
 // Login Input Component
 const Input = (props) => {
 
-  const [value, setValue] = useState(props.initialValue || "");
+  const [value, setValue] = useState(props.initialValue);
 
   const onChangeText = (text) => {
     setValue(text);

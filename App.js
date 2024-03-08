@@ -1,5 +1,5 @@
 // Library imports
-import { StyleSheet, Text, View } from "react-native";
+import { LogBox, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect, useCallback } from "react";
 import * as LoadingScreen from "expo-splash-screen";
@@ -12,8 +12,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Navigator from "./navigation/Navigator";
 import { store } from "./store/store";
 
+LogBox.ignoreLogs(["Auth"]); // Ignore async storage warning
 LoadingScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding
-AsyncStorage.clear(); // Clear the async storage (forces log out)
+//AsyncStorage.clear(); // Clear the async storage (forces log out for testing purposes)
 
 export default function App() {
   const [appLoaded, setAppLoaded] = useState(false);
