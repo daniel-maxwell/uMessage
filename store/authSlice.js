@@ -1,6 +1,5 @@
 // Library Imports
 import { createSlice } from "@reduxjs/toolkit"
-import { updateUserData } from "../utils/AuthActions";
 
 // Generates a slice object with the initial state,
 // reducer functions, and action creators

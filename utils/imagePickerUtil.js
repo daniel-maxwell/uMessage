@@ -1,6 +1,9 @@
 // Library imports
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
+import uuid from 'react-native-uuid';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+
 
 // Local imports
 import { getFirebase } from './FirebaseIntegration';
@@ -36,6 +39,14 @@ export const uploadImg = async (uri, imageName) => {
     xhr.open('GET', uri, true);
     xhr.send(null);
   });
+
+  const folderPath = 'profileImages/';
+  const storageRef = ref(getStorage(app), folderPath + '/' + uuid.v4());
+
+  await uploadBytesResumable(storageRef, blob); // Can cause crash. Known issue with Firebase SDK
+  blob.close();
+
+  return await getDownloadURL(storageRef);
 }
 
 // Check permissions for camera roll access

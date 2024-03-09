@@ -97,7 +97,10 @@ const Settings = (props) => {
     <PageContainter>
       <ScreenTitle>Settings</ScreenTitle>
       <ScrollView contentContainerStyle={styles.settingsFormContainer}>
-        <ProfilePicture size={80}/>
+        <ProfilePicture
+          size={80}
+          uid={userData.uid}
+          uri={userData.profilePicture}/>
 
         <Input /* First Name field */
           label="First Name"

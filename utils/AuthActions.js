@@ -141,8 +141,10 @@ const saveUserData = async (token, uid, expiryTime) => {
 
 // Updates user data in the database
 export const updateUserData = async (uid, updatedData) => {
-  const fullName = `${updatedData.firstName} ${updatedData.lastName}`.toLowerCase();
-  updatedData.fullName = fullName;
+  if (updatedData.firstName && updatedData.lastName) {
+    const fullName = `${updatedData.firstName} ${updatedData.lastName}`.toLowerCase();
+    updatedData.fullName = fullName;
+  }
   const databaseRef = ref(getDatabase());
   const childRef = child(databaseRef, `users/${uid}`);
   await update(childRef, updatedData);
