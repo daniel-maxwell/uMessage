@@ -1,24 +1,30 @@
 // Libray Imports
-import React, { useCallback, useReducer, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useReducer, useState } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
 
 // Local Imports
-import ScreenTitle from '../components/ScreenTitle';
-import PageContainter from '../components/PageContainer';
-import { validateFormEntry } from '../utils/FormActions';
-import { reducerFn } from '../utils/FormReducer';
-import Input from '../components/Input';
-import colours from '../constants/Colours';
-import SubmitFormButton from '../components/SubmitFormButton';
-import { updateUserData, signOut } from '../utils/AuthActions';
-import { updateCurrentUserData } from '../store/authSlice';
+import ScreenTitle from "../components/ScreenTitle";
+import PageContainter from "../components/PageContainer";
+import { validateFormEntry } from "../utils/FormActions";
+import { reducerFn } from "../utils/FormReducer";
+import Input from "../components/Input";
+import colours from "../constants/Colours";
+import SubmitFormButton from "../components/SubmitFormButton";
+import { updateUserData, signOut } from "../utils/AuthActions";
+import { updateCurrentUserData } from "../store/authSlice";
+import ProfilePicture from "../components/ProfilePicture";
 
 // Settings Screen
 const Settings = (props) => {
-
-  const userData = useSelector(state => state.auth.userData); // User data from redux store
+  const userData = useSelector((state) => state.auth.userData); // User data from redux store
   const [loading, setLoading] = useState(false); // Loading state
   const [displaySuccessMsg, setDisplaySuccessMsg] = useState(null); // Success message state
   const dispatch = useDispatch(); // Redux dispatch function
@@ -30,7 +36,7 @@ const Settings = (props) => {
       firstName,
       lastName,
       email,
-      bio
+      bio,
     },
     inputValidState: {
       firstName: undefined,
@@ -60,19 +66,17 @@ const Settings = (props) => {
   );
 
   // Handler for saving updated form data to firebase and local storage
-  const saveFormHandler = useCallback( async () => {
+  const saveFormHandler = useCallback(async () => {
     const updatedFormValues = formState.values;
     try {
       setLoading(true);
       await updateUserData(userData.uid, updatedFormValues);
-      dispatch(updateCurrentUserData({updatedData: updatedFormValues}));
+      dispatch(updateCurrentUserData({ updatedData: updatedFormValues }));
       setDisplaySuccessMsg(true);
       setTimeout(() => setDisplaySuccessMsg(false), 2500);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   }, [formState, dispatch]);
@@ -87,11 +91,15 @@ const Settings = (props) => {
       currFormState.email !== userData.email ||
       currFormState.bio !== userData.bio
     );
-  }
+  };
 
-  return <PageContainter>
-    <ScreenTitle>Settings</ScreenTitle>
-      <Input /* First Name field */
+  return (
+    <PageContainter>
+      <ScreenTitle>Settings</ScreenTitle>
+      <ScrollView contentContainerStyle={styles.settingsFormContainer}>
+        <ProfilePicture size={80}/>
+
+        <Input /* First Name field */
           label="First Name"
           id="firstName"
           initialValue={userData.firstName}
@@ -141,7 +149,8 @@ const Settings = (props) => {
           iconColor={colours.blue}
         />
         <View style={{ marginTop: 20 }}>
-          { /* Success message */
+          {
+            /* Success message */
             displaySuccessMsg && (
               <Text style={{ color: colours.primary, marginTop: 10 }}>
                 Changes saved successfully.
@@ -149,36 +158,45 @@ const Settings = (props) => {
             )
           }
 
-          { /* Loading indicator if submit has been pressed */
+          {
+            /* Loading indicator if submit has been pressed */
             loading ? (
-            <ActivityIndicator
-              size="small"
-              color={colours.primary}
-              style={{ marginTop: 10 }}
-            />
-          ) : formStateChanged() && (
-            <SubmitFormButton /* Render Save button if fields have changed */
-              title="Save Changes"
-              style={{ marginTop: 20 }}
-              onPress={saveFormHandler}
-              disabled={!formState.formValid}
-            />
-          )}
+              <ActivityIndicator
+                size="small"
+                color={colours.primary}
+                style={{ marginTop: 10 }}
+              />
+            ) : (
+              formStateChanged() && (
+                <SubmitFormButton /* Render Save button if fields have changed */
+                  title="Save Changes"
+                  style={{ marginTop: 20 }}
+                  onPress={saveFormHandler}
+                  disabled={!formState.formValid}
+                />
+              )
+            )
+          }
         </View>
 
         <SubmitFormButton /* Sign Out */
-            title="Sign Out"
-            style={{ marginTop: 20 }}
-            onPress={() => dispatch(signOut())}
-            color={colours.red}
-          />
-  </PageContainter>
-}
+          title="Sign Out"
+          style={{ marginTop: 20 }}
+          onPress={() => dispatch(signOut())}
+          color={colours.red}
+        />
+      </ScrollView>
+    </PageContainter>
+  );
+};
 
 // Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  settingsFormContainer: {
+    alignItems: "center",
   }
 });
 
