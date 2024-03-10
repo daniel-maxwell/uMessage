@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 // Local Imports
 import defaultUserImage from "../assets/images/defaultUserImg.jpeg";
 import colours from "../constants/Colours";
-import { launchPicker, uploadImg } from "../utils/imagePickerUtil";
+import { launchPicker, uploadImg } from "../utils/ImagePickerUtil";
 import { updateCurrentUserData } from "../store/authSlice";
 import { updateUserData } from "../utils/AuthActions";
 

@@ -12,7 +12,6 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
 // Local Imports
@@ -21,12 +20,15 @@ import colours from "../constants/Colours";
 
 // Chat Contacts Screen
 const Conversation = props => {
+  // Message contents state
   const [messageText, setMessageText] = useState("");
 
+  // Send message callback function
   const sendMessage = useCallback(() => {
     setMessageText("");
   }, [messageText]);
 
+  // Render Conversation Screen
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
       <KeyboardAvoidingView /* Ensure keyboard does not cover input */
@@ -54,7 +56,7 @@ const Conversation = props => {
             onSubmitEditing={sendMessage}
           />
 
-          {messageText === "" && (
+          {messageText === "" && ( /* Show camera button if empty message */
             <TouchableOpacity
               style={styles.mediaButton}
               onPress={() => console.log("Pressed Camera!")}
@@ -62,7 +64,7 @@ const Conversation = props => {
               <Feather name="camera" size={26} color={colours.blue} />
             </TouchableOpacity>
           )}
-          {messageText !== "" && (
+          {messageText !== "" && ( /* Show send button if message has contents */
             <TouchableOpacity
               style={{ ...styles.mediaButton, ...styles.sendButton }}
               onPress={sendMessage}

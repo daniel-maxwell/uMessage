@@ -1,7 +1,7 @@
 // Library imports
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
 
 // Local imports
@@ -9,14 +9,17 @@ import ConversationSettings from "../screens/ConversationSettings";
 import Settings from "../screens/Settings";
 import ConversationsList from "../screens/ConversationsList";
 import Conversation from "../screens/Conversation";
+import NewConversation from "../screens/NewConversation";
 
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator(); // Bottom Tab Navigator
+const Stack = createNativeStackNavigator(); // Stack Navigator
 
 // Bottom Tab Navigator
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerTitle: "", headerShadowVisible: false}}>
+    <Tab.Navigator
+      screenOptions={{ headerTitle: "", headerShadowVisible: false }}
+    >
       <Tab.Screen // Conversations List Screen
         name="ChatList"
         component={ConversationsList}
@@ -48,37 +51,45 @@ const TabNavigator = () => {
 const HomeNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen // Home Screen
-        name="Conversations"
-        component={TabNavigator}
-        options={{
-          gestureEnabled: true,
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen // Conversation Screen
-        name="Conversation"
-        component={Conversation}
-        options={{
-          gestureEnabled: true,
-          headerTitle: "",
-          headerBackTitleVisible: true,
-          headerBackTitle: "Back",
-          headerBackTitleStyle: { fontFamily: "light", fontSize: 18 },
-        }}
-      />
-      <Stack.Screen // Conversation Settings Screen
-        name="ConversationSettings"
-        component={ConversationSettings}
-        options={{
-          gestureEnabled: true,
-          headerTitle: "Conversation Settings",
-          headerTitleStyle: styles.label,
-          headerBackTitleVisible: true,
-          headerBackTitle: "Back",
-          headerBackTitleStyle: { fontFamily: "light", fontSize: 18 },
-        }}
-      />
+      <Stack.Group>
+        <Stack.Screen // Home Screen
+          name="Conversations"
+          component={TabNavigator}
+          options={{
+            gestureEnabled: true,
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen // Conversation Screen
+          name="Conversation"
+          component={Conversation}
+          options={{
+            gestureEnabled: true,
+            headerTitle: "",
+            headerBackTitleVisible: true,
+            headerBackTitle: "Back",
+            headerBackTitleStyle: { fontFamily: "light", fontSize: 18 },
+          }}
+        />
+        <Stack.Screen // Conversation Settings Screen
+          name="ConversationSettings"
+          component={ConversationSettings}
+          options={{
+            gestureEnabled: true,
+            headerTitle: "Conversation Settings",
+            headerTitleStyle: styles.label,
+            headerBackTitleVisible: true,
+            headerBackTitle: "Back",
+            headerBackTitleStyle: { fontFamily: "light", fontSize: 18 },
+          }}
+        />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'containedModal' }}>
+        <Stack.Screen // Conversation Settings Screen
+            name="NewConversation"
+            component={NewConversation}
+          />
+      </Stack.Group>
     </Stack.Navigator>
   );
 };
