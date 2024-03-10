@@ -19,19 +19,12 @@ import { updateUserData } from "../utils/AuthActions";
 
 // Manages the user's profile picture
 const ProfilePicture = (props) => {
-  // Allows for updating state objects
-  const dispatch = useDispatch();
-
-  // Set profile picture source
-  const src = props.uri ? { uri: props.uri } : defaultUserImage;
-
-  const uid = props.uid;
-
-  // Manage profile picture state
-  const [img, setImg] = useState(src);
-
-  // Manage loading state
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch(); // Allows for updating state objects
+  const src = props.uri ? { uri: props.uri } : defaultUserImage; // Set profile picture source
+  const uid = props.uid; // User ID
+  const [img, setImg] = useState(src); // Manage profile picture state
+  const [loading, setLoading] = useState(false); // Manage loading state
+  const showEditIcon = props.showEditIcon && props.showEditIcon === true; // Show / Hide edit icon
 
   // Update the user's profile picture
   const updateProfilePicture = async () => {
@@ -65,9 +58,12 @@ const ProfilePicture = (props) => {
     }
   };
 
+  // Determines if the profile picture is clickable
+  const Container = showEditIcon ? TouchableOpacity : View;
+
   // Render the profile picture component
   return (
-    <TouchableOpacity onPress={updateProfilePicture}>
+    <Container onPress={updateProfilePicture}>
       {loading ? (
         <View style={styles.loadingContainer} width={props.size} height={props.size}>
           <ActivityIndicator size="small" color={colours.primary} />
@@ -81,10 +77,16 @@ const ProfilePicture = (props) => {
           source={img}
         />
       )}
-      <View style={styles.editIconContainer}>
-        <FontAwesome name="pencil" size={15} color="#3b444b" />
-      </View>
-    </TouchableOpacity>
+      {
+        // Render edit icon if showEditIcon is true
+        showEditIcon && !loading (
+          <View style={styles.editIconContainer}>
+            <FontAwesome name="pencil" size={15} color="#3b444b" />
+          </View>
+        )
+      }
+
+    </Container>
   );
 };
 

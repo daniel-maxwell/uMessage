@@ -1,6 +1,6 @@
 // Library Imports
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, TextInput } from "react-native";
+import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, FlatList } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import PageContainer from "../components/PageContainer";
 import Colours from "../constants/Colours";
 import Styles from "../constants/Styles";
 import { searchForUsers } from "../utils/UserActions";
+import DataItem from "../components/DataItem";
 
 // Chat Contacts Screen
 const NewConversation = (props) => {
@@ -19,6 +20,7 @@ const NewConversation = (props) => {
   const [noUsersFound, setNoUsersFound] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Set custom header button options
   useEffect(() => {
     props.navigation.setOptions({
       headerLeft: () => {
@@ -35,6 +37,7 @@ const NewConversation = (props) => {
     });
   }, []);
 
+  // Search for users when search query changes (after a delay)
   useEffect( () => {
     const searchDelay = setTimeout( async () => {
       if (!searchQuery || searchQuery === "") {
@@ -45,13 +48,16 @@ const NewConversation = (props) => {
       setLoading(true);
 
       const results = await searchForUsers(searchQuery);
-      console.log(results);
-
+      setUsers(results);
+      if (Object.keys(results).length === 0) {
+        setNoUsersFound(true);
+      } else {
+        setNoUsersFound(false);
+      }
       setLoading(false);
     }, 500);
 
     return () => clearTimeout(searchDelay);
-
   }, [searchQuery]);
 
   // Render New Conversation Search Screen
@@ -65,7 +71,31 @@ const NewConversation = (props) => {
           onChangeText={(text) => setSearchQuery(text)}
         />
       </View>
-      {
+      { /* Render loading spinner if loading */
+        loading && (
+          <View style={Styles.center}>
+            <ActivityIndicator size={'large'} color={Colours.primary} />
+          </View>
+        )
+      }
+      { /* Render users list if they exist and are not loading */
+        !loading && users && !noUsersFound &&
+        <FlatList
+          data={Object.keys(users)}
+          renderItem={( itemData ) => {
+            const uid = itemData.item;
+            const user = users[uid];
+            return (
+              <DataItem
+                title={`${user.firstName} ${user.lastName}`}
+                subtitle={user.bio}
+                img={user.profilePicture}
+                />
+            );
+          }}
+        />
+      }
+      { /* Render no users found message if no users are found */
         !loading && noUsersFound && (
           <View style={Styles.center}>
             <Ionicons
@@ -80,7 +110,7 @@ const NewConversation = (props) => {
           </View>
         )
       }
-      {
+      { /* Render no users found message if no users are found */
         !loading && !users && (
           <View style={Styles.center}>
             <FontAwesome
@@ -99,6 +129,7 @@ const NewConversation = (props) => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   searchContainer: {
     backgroundColor: Colours.lighterGrey,

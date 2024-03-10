@@ -100,7 +100,9 @@ const Settings = (props) => {
         <ProfilePicture
           size={80}
           uid={userData.uid}
-          uri={userData.profilePicture}/>
+          uri={userData.profilePicture}
+          showEditIcon={true}
+        />
 
         <Input /* First Name field */
           label="First Name"

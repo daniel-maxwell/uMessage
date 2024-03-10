@@ -28,6 +28,7 @@ export const fetchUserData = async (uid) => {
   }
 }
 
+// Searches for users in the firebase database, or throws an error
 export const searchForUsers = async (searchString) => {
   const searchQuery = searchString.toLowerCase();
 
