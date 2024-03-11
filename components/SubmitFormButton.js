@@ -1,7 +1,11 @@
+// Library Imports
 import React from 'react';
 import { TouchableOpacity, StyleSheet, Text } from 'react-native';
+
+// Local Imports
 import colours from '../constants/Colours';
 
+//
 const SubmitForm = (props) => {
 
   const enabledColour = props.color || colours.primary;
@@ -24,7 +28,7 @@ const SubmitForm = (props) => {
   )
 }
 
-
+// Styles
 const styles = StyleSheet.create({
   button: {
     backgroundColor: colours.primary,

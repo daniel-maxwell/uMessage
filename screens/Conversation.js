@@ -1,5 +1,5 @@
 // Library Imports
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,15 +13,49 @@ import {
   Platform,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 // Local Imports
 import backgroundImage from "../assets/images/Conversation_Background_Image.png";
 import colours from "../constants/Colours";
+import PageContainer from "../components/PageContainer";
+import MessageBubble from "../components/MessageBubble";
 
 // Chat Contacts Screen
 const Conversation = props => {
+
+  // User data from redux store
+  const userData = useSelector((state) => state.auth.userData);
+
+  // Participants state
+  const [participants, setParticipants] = useState([]);
+
+  // Saved users from redux store
+  const savedUsers = useSelector((state) => state.users.savedUsers);
+
   // Message contents state
   const [messageText, setMessageText] = useState("");
+
+  // Conversation data from route params
+  const conversationData = props.route?.params?.newChatData;
+
+  // Conversation ID state
+  const [conversationId, setConversationId] = useState(props.route?.params?.conversationId);
+
+  // Get title for conversation screen
+  const getTitle = () => {
+    const otherUser = participants.find((user) => user !== userData.uid);
+    const otherUserData = savedUsers[otherUser];
+    return otherUserData ? `${otherUserData.firstName} ${otherUserData.lastName}` : "Conversation";
+  }
+
+  // Sets page title
+  useEffect (() => {
+    props.navigation.setOptions({
+      headerTitle: getTitle(),
+    });
+    setParticipants(conversationData.users);
+  }, [participants]);
 
   // Send message callback function
   const sendMessage = useCallback(() => {
@@ -39,7 +73,14 @@ const Conversation = props => {
         <ImageBackground /* Conversation Background Image */
           source={backgroundImage}
           style={styles.backgroundImage}
-        ></ImageBackground>
+        >
+          <PageContainer style={styles.messagePageContainer}>
+            {
+              !conversationId && <MessageBubble text="Here's your new conversation. Say hi!"/>
+            }
+
+          </PageContainer>
+        </ImageBackground>
 
         <View style={styles.inputContainer}>
           <TouchableOpacity
@@ -116,6 +157,9 @@ const styles = StyleSheet.create({
     padding: 8,
     width: 35,
   },
+  messagePageContainer:{
+    backgroundColor: "transparent",
+  }
 });
 
 export default Conversation;

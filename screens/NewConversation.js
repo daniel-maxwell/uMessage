@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, FlatList 
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from '@expo/vector-icons';
+import { useSelector, useDispatch } from "react-redux";
 
 // Local Imports
 import CustomHeaderButton from "../components/CustomHeaderButton";
@@ -12,13 +13,17 @@ import Colours from "../constants/Colours";
 import Styles from "../constants/Styles";
 import { searchForUsers } from "../utils/UserActions";
 import DataItem from "../components/DataItem";
+import { setSavedUsers } from "../store/userSlice";
 
 // Chat Contacts Screen
 const NewConversation = (props) => {
-  const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState();
-  const [noUsersFound, setNoUsersFound] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
+  const [users, setUsers] = useState(); // Users state
+  const [noUsersFound, setNoUsersFound] = useState(false); // No users found state
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
+  const userData = useSelector((state) => state.auth.userData); // User data from redux store
+  const dispatch = useDispatch(); // Redux dispatch function
+
 
   // Set custom header button options
   useEffect(() => {
@@ -40,6 +45,7 @@ const NewConversation = (props) => {
   // Search for users when search query changes (after a delay)
   useEffect( () => {
     const searchDelay = setTimeout( async () => {
+      // If search query is empty, set users to null and return
       if (!searchQuery || searchQuery === "") {
         setNoUsersFound(false);
         setUsers();
@@ -47,18 +53,31 @@ const NewConversation = (props) => {
       }
       setLoading(true);
 
-      const results = await searchForUsers(searchQuery);
-      setUsers(results);
+      const results = await searchForUsers(searchQuery); // Users that match search query
+      delete results[userData.uid]; // Remove current user from results
+      setUsers(results); // Set users state
+
+      // If no users found, set no users found state
       if (Object.keys(results).length === 0) {
         setNoUsersFound(true);
       } else {
         setNoUsersFound(false);
+        dispatch(setSavedUsers({ newUsers: results }))
       }
       setLoading(false);
     }, 500);
 
+    // Clear search delay
     return () => clearTimeout(searchDelay);
   }, [searchQuery]);
+
+  // When a user is selected, navigate to the chat list screen
+  const userSelectedHandler = (uid) => {
+    console.log("Selected user: ", uid);
+    props.navigation.navigate("ChatList", {
+      selectedUser: uid
+    });
+  };
 
   // Render New Conversation Search Screen
   return (
@@ -78,7 +97,7 @@ const NewConversation = (props) => {
           </View>
         )
       }
-      { /* Render users list if they exist and are not loading */
+      { /* Render users list if they exist and are not still loading */
         !loading && users && !noUsersFound &&
         <FlatList
           data={Object.keys(users)}
@@ -86,10 +105,12 @@ const NewConversation = (props) => {
             const uid = itemData.item;
             const user = users[uid];
             return (
+              // Render user data item
               <DataItem
                 title={`${user.firstName} ${user.lastName}`}
                 subtitle={user.bio}
                 img={user.profilePicture}
+                onPress={() => userSelectedHandler(uid)}
                 />
             );
           }}

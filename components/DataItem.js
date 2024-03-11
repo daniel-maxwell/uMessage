@@ -16,15 +16,13 @@ const DataItem = (props) => {
 
 
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={props.onPress}>
       <View style={styles.container}>
 
         <ProfilePicture
           uri={img}
           size={40}
         />
-
-
 
         <View style={styles.textContainer}>
           <Text style={styles.title} numberOfLines={1}>
