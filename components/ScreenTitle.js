@@ -9,7 +9,7 @@ import colours from "../constants/Colours";
 export default ScreenTitle = (props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>{props.children}</Text>
+      <Text style={styles.titleText}>{props.text}</Text>
     </View>
   );
 }
@@ -17,16 +17,13 @@ export default ScreenTitle = (props) => {
 // Styles
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
     marginBottom: 10,
-    fontSize: colours.textColour,
-    fontFamily: "bold",
-    letterSpacing: 0.3,
+
   },
   titleText: {
     fontFamily: "bold",
     fontSize: 24,
     color: colours.textColour,
+
   },
 });

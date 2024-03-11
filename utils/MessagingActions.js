@@ -4,6 +4,7 @@ import { getDatabase, ref, push, child } from "firebase/database";
 // Local imports
 import { getFirebase } from "./FirebaseIntegration";
 
+// Creates a new conversation
 export const createNewConversation = async (currentUserId, conversationData) => {
   const newConversationData = {
     ...conversationData,

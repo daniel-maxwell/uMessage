@@ -23,8 +23,7 @@ import MessageBubble from "../components/MessageBubble";
 import { createNewConversation } from "../utils/MessagingActions";
 
 // Chat Contacts Screen
-const Conversation = props => {
-
+const Conversation = (props) => {
   // User data from redux store
   const userData = useSelector((state) => state.auth.userData);
 
@@ -34,24 +33,36 @@ const Conversation = props => {
   // Saved users from redux store
   const savedUsers = useSelector((state) => state.users.savedUsers);
 
+  // Saved conversations from redux store
+  const savedConversations = useSelector(
+    (state) => state.conversations.conversationsData
+  );
+
   // Message contents state
   const [messageText, setMessageText] = useState("");
 
-  // Conversation data from route params
-  const conversationData = props.route?.params?.newChatData;
-
   // Conversation ID state
-  const [conversationId, setConversationId] = useState(props.route?.params?.conversationId);
+  const [conversationId, setConversationId] = useState(
+    props.route?.params?.conversationId
+  );
+
+  // If there is a conversation ID, get conversation data
+  // Otherwise, get new chat data from route params
+  const conversationData =
+    (conversationId && savedConversations[conversationId]) ||
+    props.route?.params?.newChatData;
 
   // Get title for conversation screen
   const getTitle = () => {
     const otherUser = participants.find((user) => user !== userData.uid);
     const otherUserData = savedUsers[otherUser];
-    return otherUserData ? `${otherUserData.firstName} ${otherUserData.lastName}` : "Conversation";
-  }
+    return otherUserData
+      ? `${otherUserData.firstName} ${otherUserData.lastName}`
+      : "Conversation";
+  };
 
   // Sets page title
-  useEffect (() => {
+  useEffect(() => {
     props.navigation.setOptions({
       headerTitle: getTitle(),
     });
@@ -59,19 +70,20 @@ const Conversation = props => {
   }, [participants]);
 
   // Send message callback function
-  const sendMessage = useCallback( async () => {
-
+  const sendMessage = useCallback(async () => {
     try {
       let id = conversationId;
-      if (!id) { // Create new conversation
-        id = await createNewConversation(userData.uid, props.route.params.newChatData);
+      if (!id) {
+        // Create new conversation
+        id = await createNewConversation(
+          userData.uid,
+          props.route.params.newChatData
+        );
         setConversationId(id);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log("Error sending message:", error);
     }
-
 
     setMessageText("");
   }, [conversationId, messageText]);
@@ -89,10 +101,12 @@ const Conversation = props => {
           style={styles.backgroundImage}
         >
           <PageContainer style={styles.messagePageContainer}>
-            {
-              !conversationId && <MessageBubble type="sys" text="Here's your new conversation. Say hi!"/>
-            }
-
+            {!conversationId && (
+              <MessageBubble
+                type="sys"
+                text="Here's your new conversation. Say hi!"
+              />
+            )}
           </PageContainer>
         </ImageBackground>
 
@@ -111,7 +125,7 @@ const Conversation = props => {
             onSubmitEditing={sendMessage}
           />
 
-          {messageText === "" && ( /* Show camera button if empty message */
+          {messageText === "" /* Show camera button if empty message */ && (
             <TouchableOpacity
               style={styles.mediaButton}
               onPress={() => console.log("Pressed Camera!")}
@@ -119,7 +133,8 @@ const Conversation = props => {
               <Feather name="camera" size={26} color={colours.blue} />
             </TouchableOpacity>
           )}
-          {messageText !== "" && ( /* Show send button if message has contents */
+          {messageText !==
+            "" /* Show send button if message has contents */ && (
             <TouchableOpacity
               style={{ ...styles.mediaButton, ...styles.sendButton }}
               onPress={sendMessage}
@@ -171,9 +186,9 @@ const styles = StyleSheet.create({
     padding: 8,
     width: 35,
   },
-  messagePageContainer:{
+  messagePageContainer: {
     backgroundColor: "transparent",
-  }
+  },
 });
 
 export default Conversation;

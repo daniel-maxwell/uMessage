@@ -9,11 +9,7 @@ import Colours from "../constants/Colours";
 
 // UserItem Component
 const DataItem = (props) => {
-
-
   const { title, subtitle, img } = props;
-
-
 
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
