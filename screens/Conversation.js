@@ -20,6 +20,7 @@ import backgroundImage from "../assets/images/Conversation_Background_Image.png"
 import colours from "../constants/Colours";
 import PageContainer from "../components/PageContainer";
 import MessageBubble from "../components/MessageBubble";
+import { createNewConversation } from "../utils/MessagingActions";
 
 // Chat Contacts Screen
 const Conversation = props => {
@@ -58,9 +59,22 @@ const Conversation = props => {
   }, [participants]);
 
   // Send message callback function
-  const sendMessage = useCallback(() => {
+  const sendMessage = useCallback( async () => {
+
+    try {
+      let id = conversationId;
+      if (!id) { // Create new conversation
+        id = await createNewConversation(userData.uid, props.route.params.newChatData);
+        setConversationId(id);
+      }
+    }
+    catch (error) {
+      console.log("Error sending message:", error);
+    }
+
+
     setMessageText("");
-  }, [messageText]);
+  }, [conversationId, messageText]);
 
   // Render Conversation Screen
   return (
@@ -76,7 +90,7 @@ const Conversation = props => {
         >
           <PageContainer style={styles.messagePageContainer}>
             {
-              !conversationId && <MessageBubble text="Here's your new conversation. Say hi!"/>
+              !conversationId && <MessageBubble type="sys" text="Here's your new conversation. Say hi!"/>
             }
 
           </PageContainer>

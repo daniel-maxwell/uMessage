@@ -79,7 +79,7 @@ const ProfilePicture = (props) => {
       )}
       {
         // Render edit icon if showEditIcon is true
-        showEditIcon && !loading (
+        showEditIcon && !loading && (
           <View style={styles.editIconContainer}>
             <FontAwesome name="pencil" size={15} color="#3b444b" />
           </View>
