@@ -19,6 +19,7 @@ import { setConversationsData } from "../store/conversationSlice";
 import Colours from "../constants/Colours";
 import Styles from "../constants/Styles";
 import { setSavedUsers } from "../store/userSlice";
+import { setConversationMessages } from "../store/messagesSlice";
 
 const Tab = createBottomTabNavigator(); // Bottom Tab Navigator
 const Stack = createNativeStackNavigator(); // Stack Navigator
@@ -124,7 +125,9 @@ const HomeNavigator = () => {
     // Subscribes to user chats listener and gets the data
     onValue(userChatsRef, (querySnapshot) => {
       // Gets the conversation ids from the user's active conversations
-      const conversationIds = querySnapshot ? Object.values(querySnapshot.val() || {}) : [];
+      const conversationIds = querySnapshot
+        ? Object.values(querySnapshot.val() || {})
+        : [];
       const conversations = {};
       let chatCount = 0;
 
@@ -134,44 +137,51 @@ const HomeNavigator = () => {
         refList.push(chatRef);
         onValue(chatRef, (chatSnapshot) => {
           chatCount++;
-          const conversationsData = chatSnapshot.val();
 
-          if (conversationsData) {
-            conversationsData.key = chatSnapshot.key;
+          const data = chatSnapshot.val();
+
+          if (data) {
+            data.key = chatSnapshot.key;
 
             // For each chat the user is a part of...
             // For each user in each chat, gets their data if it's not already saved
-            conversationsData.users.forEach((uid) => {
-              if (savedUsers[uid]) {
-                // If the user's data is already saved, skip
-                return;
-              }
+            data.users.forEach(uid => {
+              if (savedUsers[uid]) return; // If the user's data is already saved, skip
               const userRef = child(databaseRef, "users/" + uid); // Saves a reference to the user's data
 
-              // Gets the user's data from firebase
-              get(userRef).then((userSnapshot) => {
+              get(userRef).then((userSnapshot) => { // Gets the user's data from firebase
                 const newUser = userSnapshot.val();
                 // Dispatches an action to update the users data in the store
                 dispatch(setSavedUsers({ newUsers: { newUser } }));
               });
 
-
               refList.push(userRef); // Adds the user's data reference to the list
             });
-            conversations[chatSnapshot.key] = conversationsData; // Adds the chat data to the conversations object
+            conversations[chatSnapshot.key] = data; // Adds the chat data to the conversations object
           }
 
           if (chatCount >= conversationIds.length) {
             // Dispatches the conversations to the store
-            dispatch(setConversationsData({ conversationsData: conversations }));
+            dispatch(
+              setConversationsData({ conversationsData: conversations })
+            );
             setLoading(false);
           }
         });
 
-        if (chatCount === 0) {
-          // Stops loading if no conversations are found
-          setLoading(false);
-        }
+        const messagesRef = child(databaseRef, "messages/" + id);
+        refList.push(messagesRef);
+
+        onValue(messagesRef, messagesSnapshot => {
+          const messagesData = messagesSnapshot.val();
+          dispatch(
+            setConversationMessages({
+              conversationId: id,
+              messagesData
+            })
+          )
+        });
+        if (chatCount === 0) setLoading(false);
       }
     });
 

@@ -1,5 +1,5 @@
 // Library imports
-import { getDatabase, ref, push, child } from "firebase/database";
+import { getDatabase, ref, push, child, update } from "firebase/database";
 
 // Local imports
 import { getFirebase } from "./FirebaseIntegration";
@@ -23,4 +23,34 @@ export const createNewConversation = async (currentUserId, conversationData) => 
   for (const uid of participants) {
     await push(child(databaseRef, "userChats/" + uid), newConversation.key);
   }
+};
+
+// Sends a (text-only) message from one user to another
+export const sendMessageTextOnly = async (conversationId, senderId, messageContents) => {
+
+  // Firebase prerequisites
+  const app = getFirebase();
+  const databaseRef = ref(getDatabase(app));
+
+  // Create a reference for the message
+  const msgRef = child(databaseRef, "messages/" + conversationId);
+
+  // Create the message data object
+  const messageData = {
+    sender: senderId,
+    sentAt: new Date().toISOString(),
+    text: messageContents
+  };
+
+  // Push the message to the database
+  await push(msgRef, messageData);
+
+  // Update the conversation's updated time and user
+  const conversationRef = child(databaseRef, "Conversations/" + conversationId);
+  await update(conversationRef, {
+    updatedAt: new Date().toISOString(),
+    updatedBy: senderId,
+    lastMessage: messageContents 
+  });
+
 };

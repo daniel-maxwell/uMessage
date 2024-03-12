@@ -5,6 +5,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "./authSlice";
 import userSlice from "./userSlice";
 import conversationSlice from "./conversationSlice";
+import messagesSlice from "./messagesSlice";
 
 // Configures the Redux store with reducer logic
 export const store = configureStore({
@@ -12,5 +13,6 @@ export const store = configureStore({
     auth: authSlice,
     users: userSlice,
     conversations: conversationSlice,
+    messages: messagesSlice,
   },
 });

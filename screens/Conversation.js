@@ -1,5 +1,5 @@
 // Library Imports
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  FlatList,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
@@ -20,15 +21,27 @@ import backgroundImage from "../assets/images/Conversation_Background_Image.png"
 import colours from "../constants/Colours";
 import PageContainer from "../components/PageContainer";
 import MessageBubble from "../components/MessageBubble";
-import { createNewConversation } from "../utils/MessagingActions";
+import { createNewConversation, sendMessageTextOnly } from "../utils/MessagingActions";
 
 // Chat Contacts Screen
 const Conversation = (props) => {
-  // User data from redux store
-  const userData = useSelector((state) => state.auth.userData);
 
   // Participants state
   const [participants, setParticipants] = useState([]);
+
+  // Message contents state
+  const [messageText, setMessageText] = useState("");
+
+  // Conversation ID state
+  const [conversationId, setConversationId] = useState(
+    props.route?.params?.conversationId
+  );
+
+  // Error text state
+  const [errorText, setErrorText] = useState("");
+
+  // User data from redux store
+  const userData = useSelector((state) => state.auth.userData);
 
   // Saved users from redux store
   const savedUsers = useSelector((state) => state.users.savedUsers);
@@ -38,13 +51,50 @@ const Conversation = (props) => {
     (state) => state.conversations.conversationsData
   );
 
-  // Message contents state
-  const [messageText, setMessageText] = useState("");
 
-  // Conversation ID state
-  const [conversationId, setConversationId] = useState(
-    props.route?.params?.conversationId
-  );
+  const messageStateData = useSelector((state) => state.messages.messagesData);
+
+  const savedMessages = useMemo(() => {
+    if (!conversationId) return [];
+
+    const conversationMsgData = messageStateData[conversationId];
+    if (!conversationMsgData) return [];
+
+    const messages = [];
+    for (const key in conversationMsgData) {
+      const message = conversationMsgData[key];
+      messages.push({
+        key,
+        ...message,
+      });
+    }
+    return messages;
+  }, [conversationId, messageStateData]);
+
+  /*
+  // Saved messages from redux store
+  const savedMessages = useSelector((state) => {
+    if (!conversationId) return [];
+
+    // Get conversation messages data
+    const conversationMsgData = state.messages.messagesData[conversationId];
+
+    if (!conversationMsgData) return [];
+
+    const messages = [];
+    // Loop through saved messages and push to array
+    for (const key in conversationMsgData) {
+      const message = conversationMsgData[key];
+      messages.push({
+        key,
+        ...message,
+      });
+    }
+    return messages;
+  });
+  */
+
+
 
   // If there is a conversation ID, get conversation data
   // Otherwise, get new chat data from route params
@@ -80,13 +130,22 @@ const Conversation = (props) => {
           props.route.params.newChatData
         );
         setConversationId(id);
+        setMessageText("");
       }
+
+      // Send message
+      await sendMessageTextOnly(id, userData.uid, messageText);
     } catch (error) {
       console.log("Error sending message:", error);
+      setErrorText("You have been signed out for security reasons. Please sign in again.");
+      setTimeout(() => {
+        setErrorText("");
+      }, 6000);
     }
 
-    setMessageText("");
+
   }, [conversationId, messageText]);
+
 
   // Render Conversation Screen
   return (
@@ -107,6 +166,28 @@ const Conversation = (props) => {
                 text="Here's your new conversation. Say hi!"
               />
             )}
+
+            {errorText !== "" && (
+              <MessageBubble type="error" text={errorText} />
+            )}
+
+            { // Render messages if conversation ID exists
+              conversationId && (
+                <FlatList inverted /* Invert for list to emerge from the bottom */
+                  style={styles.messageList}
+                  data={savedMessages.reverse()} /* Reverse for newest messages at the bottom */
+                  renderItem={(itemData) => {
+                    const messageData = itemData.item;
+                    return (
+                      <MessageBubble
+                        type={messageData.sender === userData.uid ? "user" : "other"}
+                        text={messageData.text}
+                      />
+                    );
+                  }}
+                />
+              )
+            }
           </PageContainer>
         </ImageBackground>
 
@@ -188,6 +269,9 @@ const styles = StyleSheet.create({
   },
   messagePageContainer: {
     backgroundColor: "transparent",
+  },
+  messageList: {
+
   },
 });
 

@@ -26,6 +26,9 @@ const ConversationsList = (props) => {
 
   // Returns a sorted, memoized array of user conversations
   const memoizedUserConversations = useMemo(() => {
+    if (!userConversations) {
+      return [];
+    }
     return Object.values(userConversations).sort((a, b) => {
       return new Date(b.updatedAt) - new Date(a.updatedAt)
     });
@@ -82,13 +85,13 @@ const ConversationsList = (props) => {
           );
           const otherUser = savedUsers[otherUserId];
           if (!otherUser) {
-            return null;
+            return;
           }
           const profilePic = otherUser.profilePicture;
           return (
             <DataItem
               title={`${otherUser.firstName} ${otherUser.lastName}`}
-              subtitle={"msg"}
+              subtitle={conversationData.lastMessage || "New chat"}
               img={profilePic}
               onPress={() => props.navigation.navigate("Conversation", {conversationId})}
             ></DataItem>

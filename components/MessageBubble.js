@@ -10,14 +10,9 @@ const MessageBubble = (props) => {
 
   // Extract text from props
   const { type, text } = props;
-
-  const bubbleStyles = {
-    ...styles.bubbleContainer,
-  }
-
-  const messageStyles = {
-    ...styles.messageText,
-  }
+  const bubbleStyles = { ...styles.bubbleContainer }
+  const messageStyles = { ...styles.messageText }
+  const wrapperStyles = { ...styles.wrapper }
 
   switch ( type ) {
     case "sys":
@@ -30,8 +25,21 @@ const MessageBubble = (props) => {
       break;
 
     case "user":
-      bubbleStyles.backgroundColor = Colours.primary;
+      wrapperStyles.justifyContent = "flex-end";
+      bubbleStyles.backgroundColor = "#e7fed6"
+      bubbleStyles.maxWidth = "86%";
+      break;
+
+    case "other":
+      wrapperStyles.justifyContent = "flex-start";
+      bubbleStyles.maxWidth = "86%";
+
+      break;
+
+    case "error":
+      bubbleStyles.backgroundColor = Colours.red;
       messageStyles.color = "white";
+      bubbleStyles.marginTop = 10;
       break;
 
     default:
@@ -41,7 +49,7 @@ const MessageBubble = (props) => {
 
   // Render Message Bubble
   return (
-    <View style={styles.wrapper}>
+    <View style={wrapperStyles}>
       <View style={bubbleStyles}>
         <Text style={messageStyles}>{text}</Text>
       </View>
@@ -57,11 +65,12 @@ const styles = StyleSheet.create({
   },
   bubbleContainer: {
     padding: 5,
+    paddingHorizontal: 9,
     backgroundColor: Colours.offWhite,
-    borderRadius: 7,
+    borderRadius: 9,
     marginBottom: 10,
     borderColor: "e2dacc",
-    borderWidth: 1,
+    borderWidth: 0.75,
   },
   messageText: {
     fontSize: 16,

@@ -1,7 +1,7 @@
 // Library Imports
 import { createSlice } from "@reduxjs/toolkit"
 
-// Generates a users slice object with the initial state,
+// Generates a conversation slice object with the initial state,
 // reducer functions, and action creators
 const conversationSlice = createSlice({
   name: "conversations",
@@ -9,8 +9,8 @@ const conversationSlice = createSlice({
     conversationsData: {},
   },
   reducers: {
-    setConversationsData: (state, action) => { // Adds new users to redux store
-      state.conversationsData = action.payload.conversationsData
+    setConversationsData: (state, action) => { // Adds conversations to redux store
+      state.conversationsData = { ...action.payload.conversationsData };
     }
   },
 });
