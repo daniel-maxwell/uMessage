@@ -25,32 +25,45 @@ export const createNewConversation = async (currentUserId, conversationData) => 
   }
 };
 
+// Sends a message from one user to another
+const sendMessage = async (conversationId, senderId, messageContents, imgUrl, replyTo) => {
+    // Firebase prerequisites
+    const app = getFirebase();
+    const databaseRef = ref(getDatabase(app));
+
+    // Create a reference for the message
+    const msgRef = child(databaseRef, "messages/" + conversationId);
+
+    // Create the message data object
+    const messageData = {
+      sender: senderId,
+      sentAt: new Date().toISOString(),
+      text: messageContents
+    };
+
+    if (imgUrl) {
+      messageData.imgUrl = imgUrl;
+    }
+
+    // Push the message to the database
+    await push(msgRef, messageData);
+
+    // Update the conversation's updated time and user
+    const conversationRef = child(databaseRef, "Conversations/" + conversationId);
+    await update(conversationRef, {
+      updatedAt: new Date().toISOString(),
+      updatedBy: senderId,
+      lastMessage: messageContents
+    });
+
+}
+
 // Sends a (text-only) message from one user to another
 export const sendMessageTextOnly = async (conversationId, senderId, messageContents) => {
-
-  // Firebase prerequisites
-  const app = getFirebase();
-  const databaseRef = ref(getDatabase(app));
-
-  // Create a reference for the message
-  const msgRef = child(databaseRef, "messages/" + conversationId);
-
-  // Create the message data object
-  const messageData = {
-    sender: senderId,
-    sentAt: new Date().toISOString(),
-    text: messageContents
-  };
-
-  // Push the message to the database
-  await push(msgRef, messageData);
-
-  // Update the conversation's updated time and user
-  const conversationRef = child(databaseRef, "Conversations/" + conversationId);
-  await update(conversationRef, {
-    updatedAt: new Date().toISOString(),
-    updatedBy: senderId,
-    lastMessage: messageContents 
-  });
-
+  await sendMessage(conversationId, senderId, messageContents, null, null);
 };
+
+// Sends a message with an image from one user to another
+export const sendMessageWithImage = async (conversationId, senderId, imgUrl) => {
+  await sendMessage(conversationId, senderId, 'Image', imgUrl, null);
+}

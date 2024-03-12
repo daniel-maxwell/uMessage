@@ -1,5 +1,5 @@
 // Library Imports
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -12,54 +12,58 @@ import {
   KeyboardAvoidingView,
   Platform,
   FlatList,
+  Image,
+  ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 // Local Imports
 import backgroundImage from "../assets/images/Conversation_Background_Image.png";
-import colours from "../constants/Colours";
+import Colours from "../constants/Colours";
 import PageContainer from "../components/PageContainer";
 import MessageBubble from "../components/MessageBubble";
-import { createNewConversation, sendMessageTextOnly } from "../utils/MessagingActions";
+import { createNewConversation, sendMessageTextOnly, sendMessageWithImage } from "../utils/MessagingActions";
+import { launchCamera, launchPicker, uploadImg } from "../utils/ImagePickerUtil";
 
 // Chat Contacts Screen
 const Conversation = (props) => {
 
-  // Participants state
-  const [participants, setParticipants] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
 
-  // Message contents state
-  const [messageText, setMessageText] = useState("");
+  const [participants, setParticipants] = useState([]); // Participants state
 
-  // Conversation ID state
-  const [conversationId, setConversationId] = useState(
+  const [messageText, setMessageText] = useState(""); // Message contents state
+
+  const [conversationId, setConversationId] = useState( // Conversation ID state
     props.route?.params?.conversationId
   );
 
-  // Error text state
-  const [errorText, setErrorText] = useState("");
+  const [errorText, setErrorText] = useState(""); // Error text state
 
-  // User data from redux store
-  const userData = useSelector((state) => state.auth.userData);
+  const [localImgUri, setLocalImgUri] = useState(""); // Local image URI state
 
-  // Saved users from redux store
-  const savedUsers = useSelector((state) => state.users.savedUsers);
+  const flatList = useRef(); // Flatlist reference
 
-  // Saved conversations from redux store
-  const savedConversations = useSelector(
+  const userData = useSelector((state) => state.auth.userData); // User data from redux store
+
+  const savedUsers = useSelector((state) => state.users.savedUsers); // Saved users from redux store
+
+  const savedConversations = useSelector( // Saved conversations from redux store
     (state) => state.conversations.conversationsData
   );
 
+  const messageStateData = useSelector((state) => state.messages.messagesData); // Saved messages from redux store
 
-  const messageStateData = useSelector((state) => state.messages.messagesData);
-
-  const savedMessages = useMemo(() => {
+  const savedMessages = useMemo(() => { // Returns memoized saved messages
     if (!conversationId) return [];
 
+    // Get current conversation message data
     const conversationMsgData = messageStateData[conversationId];
     if (!conversationMsgData) return [];
 
+    // Loop through saved messages and push to array
     const messages = [];
     for (const key in conversationMsgData) {
       const message = conversationMsgData[key];
@@ -70,30 +74,6 @@ const Conversation = (props) => {
     }
     return messages;
   }, [conversationId, messageStateData]);
-
-  /*
-  // Saved messages from redux store
-  const savedMessages = useSelector((state) => {
-    if (!conversationId) return [];
-
-    // Get conversation messages data
-    const conversationMsgData = state.messages.messagesData[conversationId];
-
-    if (!conversationMsgData) return [];
-
-    const messages = [];
-    // Loop through saved messages and push to array
-    for (const key in conversationMsgData) {
-      const message = conversationMsgData[key];
-      messages.push({
-        key,
-        ...message,
-      });
-    }
-    return messages;
-  });
-  */
-
 
 
   // If there is a conversation ID, get conversation data
@@ -135,9 +115,11 @@ const Conversation = (props) => {
 
       // Send message
       await sendMessageTextOnly(id, userData.uid, messageText);
+      setMessageText("");
     } catch (error) {
       console.log("Error sending message:", error);
       setErrorText("You have been signed out for security reasons. Please sign in again.");
+      setMessageText("");
       setTimeout(() => {
         setErrorText("");
       }, 6000);
@@ -145,6 +127,64 @@ const Conversation = (props) => {
 
 
   }, [conversationId, messageText]);
+
+  // Handles opening the user's camera and taking a photo to send
+  const openCamera = useCallback( async () => {
+    try {
+      const localUri = await launchCamera();
+      if (!localUri) return;
+      setLocalImgUri(localUri);
+      setMessageText("");
+    }
+    catch (error) {
+      console.log("Error using camera:", error);
+    }
+  }, [localImgUri]);
+
+  // Handles selecting an image to send from the user's camera roll
+  const selectImg = useCallback( async () => {
+    try {
+      const localUri = await launchPicker();
+      if (!localUri) return;
+      setLocalImgUri(localUri);
+      setMessageText("");
+    }
+    catch (error) {
+      console.log("Error selecting image:", error);
+    }
+  }, [localImgUri]);
+
+
+
+  // Handles uploading the selected image to Firebase
+  const uploadImgToFirebase = useCallback( async () => {
+    setLoading(true);
+
+    let id = conversationId;
+    if (!id) {
+      // Create new conversation
+      id = await createNewConversation(
+        userData.uid,
+        props.route.params.newChatData
+      );
+    }
+
+    try {
+      // Get remote URI
+      const remoteUri = await uploadImg(localImgUri, true);
+      setLoading(false);
+
+      await sendMessageWithImage(id, userData.uid, remoteUri);
+      // setReply("")
+
+      setTimeout(() => setLocalImgUri(""), 500);
+
+    } catch (error) {
+      console.log("Error uploading image:", error);
+      setLoading(false);
+    }
+
+  }, [localImgUri, conversationId, loading])
 
 
   // Render Conversation Screen
@@ -173,15 +213,20 @@ const Conversation = (props) => {
 
             { // Render messages if conversation ID exists
               conversationId && (
-                <FlatList inverted /* Invert for list to emerge from the bottom */
+                <FlatList /* Invert for list to emerge from the bottom */
                   style={styles.messageList}
-                  data={savedMessages.reverse()} /* Reverse for newest messages at the bottom */
+                  data={savedMessages} /* Reverse for newest messages at the bottom */ // needs work to ensure always reversed on load
+                  ref={(ref) => flatList.current = ref}
+                  onContentSizeChange={() => flatList.current.scrollToEnd({ animated: true })}
+                  onLayout={() => flatList.current.scrollToEnd({ animated: true })}
                   renderItem={(itemData) => {
                     const messageData = itemData.item;
                     return (
                       <MessageBubble
                         type={messageData.sender === userData.uid ? "user" : "other"}
                         text={messageData.text}
+                        time={messageData.sentAt}
+                        imageUrl={messageData.imgUrl}
                       />
                     );
                   }}
@@ -194,9 +239,9 @@ const Conversation = (props) => {
         <View style={styles.inputContainer}>
           <TouchableOpacity
             style={styles.mediaButton}
-            onPress={() => console.log("Pressed add!")}
+            onPress={selectImg}
           >
-            <Feather name="plus" size={26} color={colours.blue} />
+            <Feather name="plus" size={26} color={Colours.blue} />
           </TouchableOpacity>
 
           <TextInput
@@ -209,13 +254,12 @@ const Conversation = (props) => {
           {messageText === "" /* Show camera button if empty message */ && (
             <TouchableOpacity
               style={styles.mediaButton}
-              onPress={() => console.log("Pressed Camera!")}
+              onPress={openCamera}
             >
-              <Feather name="camera" size={26} color={colours.blue} />
+              <Feather name="camera" size={26} color={Colours.blue} />
             </TouchableOpacity>
           )}
-          {messageText !==
-            "" /* Show send button if message has contents */ && (
+          {messageText !== "" /* Show send button if message has contents */ && (
             <TouchableOpacity
               style={{ ...styles.mediaButton, ...styles.sendButton }}
               onPress={sendMessage}
@@ -223,6 +267,44 @@ const Conversation = (props) => {
               <Feather name="send" size={20} color={"white"} />
             </TouchableOpacity>
           )}
+
+            <AwesomeAlert
+              title="Send Image?"
+              titleStyle={styles.awesomeAlertTitle}
+              show={localImgUri !== ""}
+              showConfirmButton={true}
+              confirmButtonColor={Colours.primary}
+              confirmText='Send'
+              onConfirmPressed={() => uploadImgToFirebase()}
+              showCancelButton={true}
+              cancelText='Cancel'
+              cancelButtonColor={Colours.red}
+              onCancelPressed={() => setLocalImgUri("")}
+              onDismiss={() => setLocalImgUri("")}
+              closeOnTouchOutside={true}
+              closeOnHardwareBackPress={true}
+              customView={(
+                <View>
+                  {
+                    loading && (
+                      <ActivityIndicator
+                        size="large"
+                        color={Colours.primary}
+                        style={{ marginBottom: 10 }}
+                      />
+                    )
+                  }
+                  {
+                   localImgUri !== "" && !loading && (
+                    <Image
+                      source={{ uri: localImgUri }}
+                      style={styles.alertImgStyle}>
+                    </Image>
+                   )
+                  }
+                </View>
+              )}
+            />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -251,7 +333,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderRadius: 15,
-    borderColor: colours.lightGrey,
+    borderColor: Colours.lightGrey,
     marginHorizontal: 15,
     backgroundColor: "white",
     paddingHorizontal: 12,
@@ -262,7 +344,7 @@ const styles = StyleSheet.create({
     width: 35,
   },
   sendButton: {
-    backgroundColor: colours.blue,
+    backgroundColor: Colours.blue,
     borderRadius: 50,
     padding: 8,
     width: 35,
@@ -270,8 +352,16 @@ const styles = StyleSheet.create({
   messagePageContainer: {
     backgroundColor: "transparent",
   },
-  messageList: {
-
+  awesomeAlertTitle: {
+    color: Colours.textColour,
+    fontFamily: "medium",
+    letterSpacing: 0.3,
+  },
+  alertImgStyle: {
+    width: 225,
+    height: 225,
+    borderRadius: 7,
+    marginTop: 12,
   },
 });
 
