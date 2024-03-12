@@ -2,11 +2,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { onValue, ref, getDatabase, child, off, get } from "firebase/database";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 // Local imports
 import ConversationSettings from "../screens/ConversationSettings";
@@ -112,6 +115,33 @@ const HomeNavigator = () => {
   const savedUsers = useSelector((state) => state.users.savedUsers);
   const [loading, setLoading] = useState(true); // Loading state
 
+
+  // Expo Push Notifications - source: https://docs.expo.dev/versions/latest/sdk/notifications/
+  const [expoPushToken, setExpoPushToken] = useState('');
+  console.log(expoPushToken)
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log("notif tapped")
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  console.log(expoPushToken)
+
   // Subscribes to firebase listeners for user chats and gets the data from them
   useEffect(() => {
     // Firebase prerequisites
@@ -214,5 +244,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+// Expo Push Notifications - source: https://docs.expo.dev/versions/latest/sdk/notifications/
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Unfortunately, we need permission to make push notifications work.');
+      return;
+    }
+    // Learn more about projectId:
+    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+    token = (await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig.extra.eas.projectId })).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  return token;
+}
 
 export default HomeNavigator;

@@ -1,5 +1,7 @@
+// Library Imports
 import { initializeApp } from "firebase/app";
 
+// Function to initialize and configure Firebase
 export const getFirebase = () => {
   const firebaseConfig = {
     apiKey: "AIzaSyCZbpkBaVnCdOAU6QgyUXJ7Qr0klV6WR2E",

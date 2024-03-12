@@ -3,12 +3,12 @@ import { validate } from "validate.js";
 
 // Validation Constraints for Authentication Forms
 export const validateString = (identifier, value) => {
-  /* Do not allow empty string */
+  // Do not allow empty string
   const constraints = {
         presence: { allowEmpty: false }
     };
 
-  /* If value not empty or undefined, format must be letters only */
+  // If value not empty or undefined, format must be letters only
   if (value !== "" && value !== undefined) {
     constraints.format = {
       pattern: "[a-zA-Z]+",
@@ -26,12 +26,12 @@ export const validateString = (identifier, value) => {
 };
 
 export const validateEmail = (identifier, value) => {
-  /* Do not allow empty string */
+  // Do not allow empty string
   const constraints = {
       presence: { allowEmpty: false }
   };
 
-  /* If value not empty or undefined, format must be letters only */
+  // If value not empty or undefined, format must be letters only
   if (value !== "") {
     constraints.email = true;
   }
@@ -46,7 +46,7 @@ export const validateEmail = (identifier, value) => {
 };
 
 export const validatePassword = (identifier, value) => {
-  /* Do not allow empty string */
+  // Do not allow empty string
   const constraints = {
       presence: { allowEmpty: false }
   };
