@@ -41,8 +41,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "your_project_id_here"
+        "projectId": "22d3f9f6-48aa-49d5-a937-d92e9f29f7a0"
       }
-    }
+    },
+    "owner": "dmw1211"
   }
 }
