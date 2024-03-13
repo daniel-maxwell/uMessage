@@ -118,7 +118,7 @@ const HomeNavigator = () => {
 
   // Expo Push Notifications - source: https://docs.expo.dev/versions/latest/sdk/notifications/
   const [expoPushToken, setExpoPushToken] = useState('');
-  console.log(expoPushToken)
+  //console.log(expoPushToken)
   const notificationListener = useRef();
   const responseListener = useRef();
 
@@ -227,7 +227,6 @@ const HomeNavigator = () => {
       <ActivityIndicator size="large" color={Colours.primary} />
     </View>;
   }
-
   return <StackNavigator />;
 };
 
@@ -272,7 +271,7 @@ async function registerForPushNotificationsAsync() {
     // Learn more about projectId:
     // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
     token = (await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig.extra.eas.projectId })).data;
-    console.log(token);
+    //console.log(token);
   } else {
     alert('Must use physical device for Push Notifications');
   }

@@ -43,6 +43,7 @@ export const launchPicker = async () => {
   }
 }
 
+// 👇🏼 Code taken from https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
 // Upload the image to Firebase
 export const uploadImg = async (uri, imageMessage=false) => {
   const app = getFirebase();
