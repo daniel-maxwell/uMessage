@@ -18,9 +18,10 @@ const DataItem = (props) => {
         <ProfilePicture
           uri={img}
           size={40}
+          aria-label={`Profile Picture of User`}
         />
 
-        <View style={styles.textContainer}>
+        <View style={styles.textContainer} aria-label="User's Name">
           <Text style={styles.title} numberOfLines={1}>
             {title}
           </Text>

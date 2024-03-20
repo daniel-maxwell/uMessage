@@ -13,6 +13,7 @@ import Navigator from "./navigation/Navigator";
 import { store } from "./store/store";
 
 LogBox.ignoreLogs(["Auth"]); // Ignore async storage warning
+LogBox.ignoreLogs(["Expo"]); // Ignore async storage warning
 LoadingScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding
 //AsyncStorage.clear(); // Clear the async storage (forces log out for testing purposes)
 

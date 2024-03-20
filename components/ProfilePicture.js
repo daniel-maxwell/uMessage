@@ -29,13 +29,16 @@ const ProfilePicture = (props) => {
   // Update the user's profile picture
   const updateProfilePicture = async () => {
     try {
+      // Launch Image Picker and get local URI of image
       const localUri = await launchPicker();
 
+      // If no image was selected, return
       if (!localUri) {
         return;
       }
 
-      setLoading(true);
+      setLoading(true); // Enable loading state
+
       // Upload profile picture to server
       const firebaseUrl = await uploadImg(localUri);
       setLoading(false);
@@ -45,12 +48,14 @@ const ProfilePicture = (props) => {
         throw new Error("Failed to upload image");
       }
 
+      // Update user data object with new profile picture URL
       const updatedData = { profilePicture: firebaseUrl };
 
       // Update profile picture in redux store
       await updateUserData(uid, updatedData); // Auth actions
       dispatch(updateCurrentUserData({ updatedData })); // Auth slice
 
+      // Set profile picture state to new image stored in the database
       setImg({ uri: firebaseUrl });
     } catch (error) {
       setLoading(false);
@@ -66,7 +71,7 @@ const ProfilePicture = (props) => {
     <Container onPress={updateProfilePicture}>
       {loading ? (
         <View style={styles.loadingContainer} width={props.size} height={props.size}>
-          <ActivityIndicator size="small" color={colours.primary} />
+          <ActivityIndicator size="small" color={colours.primary} aria-label="Loading indicator"/>
         </View>
       ) : (
         <Image
@@ -75,12 +80,13 @@ const ProfilePicture = (props) => {
             ...{ width: props.size, height: props.size },
           }}
           source={img}
+          aria-label="Profile Picture"
         />
       )}
       {
         // Render edit icon if showEditIcon is true
         showEditIcon && !loading && (
-          <View style={styles.editIconContainer}>
+          <View style={styles.editIconContainer} aria-label="Profile Picture Edit Button">
             <FontAwesome name="pencil" size={15} color="#3b444b" />
           </View>
         )

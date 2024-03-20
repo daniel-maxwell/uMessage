@@ -27,6 +27,7 @@ const MessageBubble = (props) => {
   const wrapperStyles = { ...styles.wrapper }
   const timeStr = formatTime(time);
 
+  // Set styles based on message type (system, user, other user, error)
   switch ( type ) {
     case "sys":
       bubbleStyles.paddingHorizontal = 10;

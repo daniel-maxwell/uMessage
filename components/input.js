@@ -5,7 +5,7 @@ import { useState } from "react";
 // Local Imports
 import colours from "../constants/Colours";
 
-// Login Input Component
+// Text Input Component
 const Input = (props) => {
 
   const [value, setValue] = useState(props.initialValue);
@@ -15,6 +15,7 @@ const Input = (props) => {
     props.onInputChanged(props.id, text);
   };
 
+  // Render the Input component
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{props.label}</Text>

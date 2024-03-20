@@ -98,6 +98,7 @@ const SignIn = props => {
       <Input /* E-mail field */
         label="E-mail"
         id="email"
+        aria-label="E-mail field"
         initialValue={formState.values.email}
         keyboardType="email-address"
         onInputChanged={formFieldChangedHandler}
@@ -110,6 +111,7 @@ const SignIn = props => {
       <Input /* Password field */
         label="Password"
         id="password"
+        aria-label="Password field"
         initialValue={formState.values.password}
         secureTextEntry={true} // Hides the text
         onInputChanged={formFieldChangedHandler}
@@ -123,12 +125,14 @@ const SignIn = props => {
           loading ? (    /* Loading indicator if submit has been pressed */
           <ActivityIndicator
             size="small"
+            aria-label="Loading Indicator"
             color={colours.primary}
             style={{ marginTop: 10 }}
           />
         ) : (
           <SubmitFormButton /* Submit */
             title="Sign In"
+            aria-label="Sign In Button"
             style={{ marginTop: 20 }}
             onPress={() => submitFormHandler()}
             disabled={!formState.formValid}

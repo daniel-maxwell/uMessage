@@ -32,7 +32,8 @@ const NewConversation = (props) => {
         return (
           <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
             <Item
-              title="Back"
+              title="  Back"
+              aria-label="Back Button"
               onPress={() => props.navigation.goBack()}
             ></Item>
           </HeaderButtons>
@@ -86,6 +87,7 @@ const NewConversation = (props) => {
         <Ionicons name="search-sharp" size={15} color={Colours.lightGrey} />
         <TextInput
           placeholder="Search"
+          aria-label="Search for a user to chat with"
           style={styles.search}
           onChangeText={(text) => setSearchQuery(text)}
         />
@@ -110,6 +112,7 @@ const NewConversation = (props) => {
                 title={`${user.firstName} ${user.lastName}`}
                 subtitle={user.bio}
                 img={user.profilePicture}
+                aria-label={`User Search Result`}
                 onPress={() => userSelectedHandler(uid)}
                 />
             );
@@ -118,7 +121,7 @@ const NewConversation = (props) => {
       }
       { /* Render no users found message if no users are found */
         !loading && noUsersFound && (
-          <View style={Styles.center}>
+          <View style={Styles.center} aria-label="No users found">
             <Ionicons
               name="sad-outline"
               size={55}
@@ -131,9 +134,9 @@ const NewConversation = (props) => {
           </View>
         )
       }
-      { /* Render no users found message if no users are found */
+      { /* Render no users found message if the user hasn't searched yet */
         !loading && !users && (
-          <View style={Styles.center}>
+          <View style={Styles.center} aria-label="No users found view">
             <FontAwesome
               name="users"
               size={55}

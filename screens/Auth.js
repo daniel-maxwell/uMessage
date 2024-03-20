@@ -38,6 +38,7 @@ const Auth = (props) => {
                 /* Header Logo Image */
                 source={logo}
                 style={styles.image}
+                aria-label="Main Logo Image"
               />
             </View>
             {
@@ -47,6 +48,7 @@ const Auth = (props) => {
             <TouchableOpacity /* Change form link */
               onPress={() => setIsSignedUp(!isSignedUp)}
               style={styles.changeFormContainer}
+              aria-label="Button to change form type"
             >
               <Text style={styles.changeFormLink}>
                 {`Switch to ${isSignedUp ? "Sign Up" : "Sign In"}`}

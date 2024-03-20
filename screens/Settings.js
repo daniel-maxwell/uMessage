@@ -47,6 +47,7 @@ const Settings = (props) => {
     formValid: false,
   };
 
+  // Form state reducer
   const [formState, dispatchFormState] = useReducer(
     reducerFn,
     defaultFormState
@@ -102,11 +103,13 @@ const Settings = (props) => {
           uid={userData.uid}
           uri={userData.profilePicture}
           showEditIcon={true}
+          aria-label="Profile Picture (Opens Image Picker on Press)"
         />
 
         <Input /* First Name field */
           label="First Name"
           id="firstName"
+          aria-label="First Name Input"
           initialValue={userData.firstName}
           onInputChanged={formFieldChangedHandler}
           autoCapitalize="none"
@@ -119,6 +122,7 @@ const Settings = (props) => {
         <Input /* Last Name field */
           label="Last Name"
           id="lastName"
+          aria-label="Last Name Input"
           initialValue={userData.lastName}
           onInputChanged={formFieldChangedHandler}
           autoCapitalize="none"
@@ -131,6 +135,7 @@ const Settings = (props) => {
         <Input /* E-mail field */
           label="E-mail"
           id="email"
+          aria-label="Email Input"
           initialValue={userData.email}
           onInputChanged={formFieldChangedHandler}
           keyboardType="email-address"
@@ -144,6 +149,7 @@ const Settings = (props) => {
         <Input /* Bio field */
           label="Bio"
           id="bio"
+          aria-label="Bio Input"
           initialValue={userData.bio}
           onInputChanged={formFieldChangedHandler}
           autoCapitalize="none"
@@ -168,6 +174,7 @@ const Settings = (props) => {
             loading ? (
               <ActivityIndicator
                 size="small"
+                aria-label="Loading Indicator"
                 color={colours.primary}
                 style={{ marginTop: 10 }}
               />
@@ -175,6 +182,7 @@ const Settings = (props) => {
               formStateChanged() && (
                 <SubmitFormButton /* Render Save button if fields have changed */
                   title="Save Changes"
+                  aria-label="Save Changes Button"
                   style={{ marginTop: 20 }}
                   onPress={saveFormHandler}
                   disabled={!formState.formValid}
@@ -186,6 +194,7 @@ const Settings = (props) => {
 
         <SubmitFormButton /* Sign Out */
           title="Sign Out"
+          aria-label="Sign Out Button"
           style={{ marginTop: 20 }}
           onPress={() => dispatch(signOut())}
           color={colours.red}

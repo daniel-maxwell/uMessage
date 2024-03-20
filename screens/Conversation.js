@@ -31,29 +31,19 @@ import { launchCamera, launchPicker, uploadImg } from "../utils/ImagePickerUtil"
 const Conversation = (props) => {
 
   const [loading, setLoading] = useState(false); // Loading state
-
   const [participants, setParticipants] = useState([]); // Participants state
-
   const [messageText, setMessageText] = useState(""); // Message contents state
-
   const [conversationId, setConversationId] = useState( // Conversation ID state
     props.route?.params?.conversationId
   );
-
   const [errorText, setErrorText] = useState(""); // Error text state
-
   const [localImgUri, setLocalImgUri] = useState(""); // Local image URI state
-
   const flatList = useRef(); // Flatlist reference
-
   const userData = useSelector((state) => state.auth.userData); // User data from redux store
-
   const savedUsers = useSelector((state) => state.users.savedUsers); // Saved users from redux store
-
   const savedConversations = useSelector( // Saved conversations from redux store
     (state) => state.conversations.conversationsData
   );
-
   const messageStateData = useSelector((state) => state.messages.messagesData); // Saved messages from redux store
 
   const savedMessages = useMemo(() => { // Returns memoized saved messages
@@ -204,11 +194,12 @@ const Conversation = (props) => {
               <MessageBubble
                 type="sys"
                 text="Here's your new conversation. Say hi!"
+                aria-label="System message"
               />
             )}
 
             {errorText !== "" && (
-              <MessageBubble type="error" text={errorText} />
+              <MessageBubble type="error" text={errorText} aria-label="error message"/>
             )}
 
             { // Render messages if conversation ID exists
@@ -227,6 +218,7 @@ const Conversation = (props) => {
                         text={messageData.text}
                         time={messageData.sentAt}
                         imageUrl={messageData.imgUrl}
+                        aria-label="message bubble"
                       />
                     );
                   }}
@@ -240,6 +232,7 @@ const Conversation = (props) => {
           <TouchableOpacity
             style={styles.mediaButton}
             onPress={selectImg}
+            aria-label="add media button"
           >
             <Feather name="plus" size={26} color={Colours.blue} />
           </TouchableOpacity>
@@ -255,6 +248,7 @@ const Conversation = (props) => {
             <TouchableOpacity
               style={styles.mediaButton}
               onPress={openCamera}
+              aria-label="open camera button"
             >
               <Feather name="camera" size={26} color={Colours.blue} />
             </TouchableOpacity>
@@ -263,6 +257,7 @@ const Conversation = (props) => {
             <TouchableOpacity
               style={{ ...styles.mediaButton, ...styles.sendButton }}
               onPress={sendMessage}
+              aria-label="send message button"
             >
               <Feather name="send" size={20} color={"white"} />
             </TouchableOpacity>
@@ -283,6 +278,7 @@ const Conversation = (props) => {
               onDismiss={() => setLocalImgUri("")}
               closeOnTouchOutside={true}
               closeOnHardwareBackPress={true}
+              aria-label="send image confirm window"
               customView={(
                 <View>
                   {

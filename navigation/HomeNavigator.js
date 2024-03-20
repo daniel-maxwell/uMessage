@@ -36,6 +36,7 @@ const TabNavigator = () => {
       <Tab.Screen // Conversations List Screen
         name="ChatList"
         component={ConversationsList}
+        aria-label="Go To Conversations List Screen"
         options={{
           tabBarLabel: "Conversations",
           tabBarIcon: ({ color, size }) => {
@@ -47,6 +48,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen // Settings Screen
         name="Settings"
+        aria-label="Go To Settings Screen"
         component={Settings}
         options={{
           tabBarLabel: "Settings",
@@ -68,6 +70,7 @@ const StackNavigator = () => {
       <Stack.Group>
         <Stack.Screen // Home Screen
           name="Conversations"
+          aria-label="Conversations List Screen"
           component={TabNavigator}
           options={{
             gestureEnabled: true,
@@ -76,6 +79,7 @@ const StackNavigator = () => {
         />
         <Stack.Screen // Conversation Screen
           name="Conversation"
+          aria-label="Conversation Screen"
           component={Conversation}
           options={{
             gestureEnabled: true,
@@ -88,6 +92,7 @@ const StackNavigator = () => {
         <Stack.Screen // Conversation Settings Screen
           name="ConversationSettings"
           component={ConversationSettings}
+          aria-label="Conversation Settings Screen"
           options={{
             gestureEnabled: true,
             headerTitle: "Conversation Settings",
@@ -116,6 +121,7 @@ const HomeNavigator = () => {
   const [loading, setLoading] = useState(true); // Loading state
 
 
+  // 👇🏼 Not my Code!
   // Expo Push Notifications - source: https://docs.expo.dev/versions/latest/sdk/notifications/
   const [expoPushToken, setExpoPushToken] = useState('');
   //console.log(expoPushToken)
@@ -140,7 +146,6 @@ const HomeNavigator = () => {
     };
   }, []);
 
-  console.log(expoPushToken)
 
   // Subscribes to firebase listeners for user chats and gets the data from them
   useEffect(() => {
@@ -199,9 +204,13 @@ const HomeNavigator = () => {
           }
         });
 
+        // Gets a reference to the messages in each chat
         const messagesRef = child(databaseRef, "messages/" + id);
+
+        // Pushes the messages reference to the reference list
         refList.push(messagesRef);
 
+        // Dispatches an action to update the messages data in the local store
         onValue(messagesRef, messagesSnapshot => {
           const messagesData = messagesSnapshot.val();
           dispatch(
@@ -211,6 +220,7 @@ const HomeNavigator = () => {
             })
           )
         });
+        // Stops loading if there are no chats
         if (chatCount === 0) setLoading(false);
       }
     });
@@ -224,7 +234,7 @@ const HomeNavigator = () => {
   if (loading) {
     // Loading indicator while fetching conversations data
     <View style={Styles.center}>
-      <ActivityIndicator size="large" color={Colours.primary} />
+      <ActivityIndicator size="large" color={Colours.primary} aria-label="Loading Indicator"/>
     </View>;
   }
   return <StackNavigator />;
@@ -234,7 +244,7 @@ const HomeNavigator = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
   },
   label: {
     fontFamily: "light",
@@ -244,6 +254,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// 👇🏼 Not my Code!
 // Expo Push Notifications - source: https://docs.expo.dev/versions/latest/sdk/notifications/
 async function registerForPushNotificationsAsync() {
   let token;

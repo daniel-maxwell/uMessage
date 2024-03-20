@@ -1,6 +1,6 @@
 // Library Imports
 import React, { useEffect, useMemo } from "react";
-import { View, Text, StyleSheet, Button, FlatList } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector } from "react-redux";
 
@@ -43,6 +43,7 @@ const ConversationsList = (props) => {
             <Item
               title="New Conversation"
               iconName="create-outline"
+              aria-label="Start a New Conversation Button"
               onPress={() => {
                 props.navigation.navigate("NewConversation");
               }}

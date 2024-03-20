@@ -97,6 +97,7 @@ const SignUp = (props) => {
       <Input /* First Name field */
         label="First Name"
         id="firstName"
+        aria-label="First Name field"
         onInputChanged={formFieldChangedHandler}
         autoCapitalize="none"
         errorText={formState.inputValidState["firstName"]}
@@ -108,6 +109,7 @@ const SignUp = (props) => {
       <Input /* Last Name field */
         label="Last Name"
         id="lastName"
+        aria-label="Last Name field"
         onInputChanged={formFieldChangedHandler}
         autoCapitalize="none"
         errorText={formState.inputValidState["lastName"]}
@@ -119,6 +121,7 @@ const SignUp = (props) => {
       <Input /* E-mail field */
         label="E-mail"
         id="email"
+        aria-label="E-mail field"
         onInputChanged={formFieldChangedHandler}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -131,6 +134,7 @@ const SignUp = (props) => {
       <Input /* Password field */
         label="Password"
         id="password"
+        aria-label="Password field"
         onInputChanged={formFieldChangedHandler}
         secureTextEntry={true} // Hides text
         autoCapitalize="none"
@@ -144,12 +148,14 @@ const SignUp = (props) => {
         loading ? (    /* Loading indicator if submit has been pressed */
         <ActivityIndicator
           size="small"
+          aria-label="Loading Indicator"
           color={colours.primary}
           style={{ marginTop: 10 }}
         />
       ) : (
         <SubmitFormButton /* Submit */
           title="Sign Up"
+          aria-label="Sign Up Button"
           style={{ marginTop: 20 }}
           onPress={submitFormHandler}
           disabled={!formState.formValid}

@@ -12,11 +12,10 @@ import { fetchUserData } from "../utils/UserActions";
 
 // StartUp screen component
 const StartUp = () => {
-
   // Redux dispatch
   const dispatch = useDispatch();
 
-  useEffect (() => {
+  useEffect(() => {
     // Check if user is authenticated
     const attemptAuth = async () => {
       // Get stored user data if it exists
@@ -27,7 +26,7 @@ const StartUp = () => {
         return;
       }
 
-      // Check if token is expired
+      // Check if authentication token has expired
       const { token, uid, expiryTime: expiryStr } = JSON.parse(storedUserData);
       const expiryTime = new Date(expiryStr);
 
@@ -37,16 +36,22 @@ const StartUp = () => {
         return;
       }
 
+      // Get user data from firebase
       const userData = await fetchUserData(uid);
-      dispatch(login({ token: token, userData }));
 
-    }
+      // Dispatch login action
+      dispatch(login({ token: token, userData }));
+    };
     attemptAuth();
   }, [dispatch]);
 
   return (
     <View style={Styles.center}>
-      <ActivityIndicator size="large" color={colours.primary} />
+      <ActivityIndicator
+        size="large"
+        color={colours.primary}
+        aria-label="Loading Indicator"
+      />
     </View>
   );
 };
