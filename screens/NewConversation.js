@@ -17,13 +17,13 @@ import { setSavedUsers } from "../store/userSlice";
 
 // Chat Contacts Screen
 const NewConversation = (props) => {
+  const dispatch = useDispatch(); // Redux dispatch function
   const [loading, setLoading] = useState(false); // Loading state
   const [users, setUsers] = useState(); // Users state
   const [noUsersFound, setNoUsersFound] = useState(false); // No users found state
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const userData = useSelector((state) => state.auth.userData); // User data from redux store
-  const dispatch = useDispatch(); // Redux dispatch function
-
+  const isGroupChat = props.route.params && props.route.params.isGroupChat; // Group chat flag
 
   // Set custom header button options
   useEffect(() => {
@@ -39,7 +39,7 @@ const NewConversation = (props) => {
           </HeaderButtons>
         );
       },
-      headerTitle: "New Conversation",
+      headerTitle: isGroupChat ? "Add participants" : "New conversation"
     });
   }, []);
 
@@ -83,6 +83,22 @@ const NewConversation = (props) => {
   // Render New Conversation Search Screen
   return (
     <PageContainer>
+
+      {
+        isGroupChat && (
+          <View style={styles.conversationNameContainer}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textbox}
+                placeholder="New Group Chat"
+                autoCorrect={false}
+                autoComplete={false}
+              />
+            </View>
+          </View>
+        )
+      }
+
       <View style={styles.searchContainer}>
         <Ionicons name="search-sharp" size={15} color={Colours.lightGrey} />
         <TextInput
@@ -180,6 +196,25 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     fontSize: 15,
 
+  },
+  conversationNameContainer: {
+    paddingVertical: 10,
+  },
+  inputContainer: {
+    width: "100%",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    backgroundColor: Colours.offWhite,
+    flexDirection: "row",
+    borderRadius: 2,
+  },
+  textbox: {
+    color: Colours.textColour,
+    width: "100%",
+    
+    flex: 1,
+    fontSize: 15,
+    fontFamily: "light",
   },
 });
 

@@ -1,14 +1,16 @@
 // Library Imports
 import React, { useEffect, useMemo } from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, View, Text, TouchableOpacity } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector } from "react-redux";
+
 
 // Local Imports
 import CustomHeaderButton from "../components/CustomHeaderButton";
 import DataItem from "../components/DataItem";
 import PageContainer from "../components/PageContainer";
 import ScreenTitle from "../components/ScreenTitle";
+import Colours from "../constants/Colours";
 
 // Chat Contacts Screen
 const ConversationsList = (props) => {
@@ -75,7 +77,14 @@ const ConversationsList = (props) => {
   // Render Conversations List Screen
   return (
     <PageContainer>
-      <ScreenTitle text="Conversations"/>
+      <ScreenTitle text="Conversationsss"/>
+
+      <View>
+        <TouchableOpacity onPress={() => props.navigation.navigate("NewConversation", {isGroupChat: true} )}>
+          <Text style={styles.newGroupText} aria-label="Create Group Chat Button">New Group</Text>
+        </TouchableOpacity>
+      </View>
+
       <FlatList
         data={memoizedUserConversations}
         renderItem={(itemData) => {
@@ -112,6 +121,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "black",
   },
+  newGroupText: {
+    fontSize: 17,
+    color: Colours.blue,
+    marginBottom: 5
+  }
 });
 
 export default ConversationsList;
