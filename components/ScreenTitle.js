@@ -18,7 +18,6 @@ export default ScreenTitle = (props) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 10,
-
   },
   titleText: {
     fontFamily: "bold",

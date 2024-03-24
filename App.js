@@ -7,6 +7,7 @@ import * as Fonts from "expo-font";
 import "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MenuProvider } from "react-native-popup-menu";
 
 // Local imports
 import Navigator from "./navigation/Navigator";
@@ -66,7 +67,9 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider style={styles.container} onLayout={onLayoutChange}>
-        <Navigator />
+        <MenuProvider>
+          <Navigator />
+        </MenuProvider>
       </SafeAreaProvider>
     </Provider>
   );

@@ -1,6 +1,6 @@
 // Library Imports
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, FlatList } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, TextInput, ActivityIndicator, FlatList } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from '@expo/vector-icons';
@@ -14,34 +14,66 @@ import Styles from "../constants/Styles";
 import { searchForUsers } from "../utils/UserActions";
 import DataItem from "../components/DataItem";
 import { setSavedUsers } from "../store/userSlice";
+import ProfilePicture from "../components/ProfilePicture";
 
 // Chat Contacts Screen
 const NewConversation = (props) => {
   const dispatch = useDispatch(); // Redux dispatch function
+
   const [loading, setLoading] = useState(false); // Loading state
   const [users, setUsers] = useState(); // Users state
   const [noUsersFound, setNoUsersFound] = useState(false); // No users found state
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
-  const userData = useSelector((state) => state.auth.userData); // User data from redux store
-  const isGroupChat = props.route.params && props.route.params.isGroupChat; // Group chat flag
+  const [conversationName, setConversationName] = useState(''); // Conversation name state
+  const [selectedUsers, setSelectedUsers] = useState([]); // Selected users state
+  console.log(users)
 
-  // Set custom header button options
+  const userData = useSelector((state) => state.auth.userData); // User data from redux store
+  const savedUsers = useSelector((state) => state.users.savedUsers); // Saved users from redux store
+  const isGroupChat = props.route.params && props.route.params.isGroupChat; // Group chat flag
+  const isGroupChatDisabled = selectedUsers.length === 0 || conversationName === ""; // Group chat disabled flag
+  const selectedUsersFlatList = useRef(); // Selected users flat list ref
+
+  // Set custom header options
   useEffect(() => {
     props.navigation.setOptions({
       headerLeft: () => {
         return (
           <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
             <Item
-              title="  Back"
+              title="Back"
               aria-label="Back Button"
               onPress={() => props.navigation.goBack()}
             ></Item>
           </HeaderButtons>
         );
       },
-      headerTitle: isGroupChat ? "Add participants" : "New conversation"
+      headerRight: () => {
+        return (
+          <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            {
+              isGroupChat && (
+                <Item
+                  title="Create"
+                  aria-label="Create Group Chat Button"
+                  disabled={isGroupChatDisabled}
+                  color={isGroupChatDisabled ? Colours.lightGrey : undefined}
+                  onPress={() => {
+                    props.navigation.navigate("ChatList", {
+                      selectedUsers: selectedUsers,
+                      conversationName: conversationName
+                    });
+                  }}
+                ></Item>
+              )
+            }
+          </HeaderButtons>
+        );
+      },
+      headerTitle: isGroupChat ? "Add Participants" : "New Conversation",
+      headerTitleAlign: "center"
     });
-  }, []);
+  }, [conversationName, selectedUsers]);
 
   // Search for users when search query changes (after a delay)
   useEffect( () => {
@@ -74,35 +106,70 @@ const NewConversation = (props) => {
 
   // When a user is selected, navigate to the chat list screen
   const userSelectedHandler = (uid) => {
-    console.log("Selected user: ", uid);
-    props.navigation.navigate("ChatList", {
-      selectedUser: uid
-    });
+
+    if (isGroupChat) {
+      const newSelectedUsers = selectedUsers.includes(uid) ?
+        selectedUsers.filter((id) => id !== uid) :
+        selectedUsers.concat(uid);
+      setSelectedUsers(newSelectedUsers);
+    }
+    else {
+      props.navigation.navigate("ChatList", {
+        selectedUser: uid
+      });
+    }
   };
 
   // Render New Conversation Search Screen
   return (
     <PageContainer>
 
-      {
+      { // Render group chat input fields if group chat is enabled
         isGroupChat && (
-          <View style={styles.conversationNameContainer}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.textbox}
-                placeholder="New Group Chat"
-                autoCorrect={false}
-                autoComplete={false}
+          <>
+            <View style={styles.conversationNameContainer}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.textbox}
+                  placeholder="Enter a group name..."
+                  keyboardType="email-address"
+                  value={conversationName}
+                  onChangeText={(text) => setConversationName(text)}
+                />
+              </View>
+            </View>
+            <View style={styles.selectedUsersContainer}>
+              <FlatList
+                style={styles.selectedUsersList}
+                data={selectedUsers}
+                horizontal={true}
+                keyExtractor={(item) => item}
+                contentContainerStyle={{ alignItems: "center" }}
+                ref={(ref) => selectedUsersFlatList.current = ref}
+                onContentSizeChange={() => selectedUsersFlatList.current.scrollToEnd()}
+                renderItem={itemData => {
+                  const uid = itemData.item;
+                  const userData = users[uid];
+                  return (
+                    <ProfilePicture
+                      style={styles.selectedUserStyle}
+                      size={50}
+                      uri={userData.profilePicture}
+                      onPress={() => userSelectedHandler(uid)}
+                      showRemoveIcon={true}
+                    />
+                  );
+                }}
               />
             </View>
-          </View>
+          </>
         )
       }
 
       <View style={styles.searchContainer}>
         <Ionicons name="search-sharp" size={15} color={Colours.lightGrey} />
         <TextInput
-          placeholder="Search"
+          placeholder="Search for users to chat with..."
           aria-label="Search for a user to chat with"
           style={styles.search}
           onChangeText={(text) => setSearchQuery(text)}
@@ -130,7 +197,9 @@ const NewConversation = (props) => {
                 img={user.profilePicture}
                 aria-label={`User Search Result`}
                 onPress={() => userSelectedHandler(uid)}
-                />
+                type={isGroupChat ? "checkbox" : ""}
+                isChecked={selectedUsers.includes(uid)}
+              />
             );
           }}
         />
@@ -203,19 +272,33 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
     paddingHorizontal: 10,
-    paddingVertical: 15,
+    paddingTop: 15,
     backgroundColor: Colours.offWhite,
     flexDirection: "row",
     borderRadius: 2,
+    paddingBottom: 15,
+
   },
   textbox: {
     color: Colours.textColour,
     width: "100%",
-    
-    flex: 1,
     fontSize: 15,
-    fontFamily: "light",
+    fontFamily: "medium",
+    letterSpacing: 0.3,
   },
+  selectedUsersContainer: {
+    height: 50,
+    justifyContent: "center",
+  },
+  selectedUsersList: {
+    height: "100%",
+    paddingTop: 15
+  },
+  selectedUserStyle: {
+    marginRight: 10,
+    marginBottom: 15,
+  }
+
 });
 
 export default NewConversation;

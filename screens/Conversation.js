@@ -217,6 +217,9 @@ const Conversation = (props) => {
                         type={messageData.sender === userData.uid ? "user" : "other"}
                         text={messageData.text}
                         time={messageData.sentAt}
+                        messageId={messageData.key}
+                        userId={userData.uid}
+                        conversationId={conversationId}
                         imageUrl={messageData.imgUrl}
                         aria-label="message bubble"
                       />

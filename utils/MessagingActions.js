@@ -1,5 +1,5 @@
 // Library imports
-import { getDatabase, ref, push, child, update } from "firebase/database";
+import { getDatabase, ref, push, child, update, get, set, remove } from "firebase/database";
 
 // Local imports
 import { getFirebase } from "./FirebaseIntegration";
@@ -61,6 +61,32 @@ const sendMessage = async (conversationId, senderId, messageContents, imgUrl, re
 // Sends a (text-only) message from one user to another
 export const sendMessageTextOnly = async (conversationId, senderId, messageContents) => {
   await sendMessage(conversationId, senderId, messageContents, null, null);
+};
+
+export const likeMessage = async (messageId, conversationId, userId) => {
+  try {
+    const app = getFirebase();
+    const databaseRef = ref(getDatabase(app));
+    const childRef = child(databaseRef, `userLikedMessages/${userId}/${conversationId}/${messageId}`);
+    const snapshot = await get(childRef);
+    if (snapshot.exists()) {
+      // Liked item exists - un-like it
+      await remove(childRef);
+    }
+    else {
+      // Liked item does not exist - like it
+      const likedMessageData = {
+        messageId: messageId,
+        conversationId: conversationId,
+        likedAt: new Date().toISOString()
+      }
+
+      await set(childRef, likedMessageData);
+    }
+  }
+  catch (error) {
+    console.log('Error liking message:', error);
+  }
 };
 
 // Sends a message with an image from one user to another

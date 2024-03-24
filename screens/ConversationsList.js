@@ -17,6 +17,12 @@ const ConversationsList = (props) => {
   // Get selected user from route params (if any)
   selectedUser = props.route?.params?.selectedUser;
 
+  // Get selected user list from route params (if any)
+  selectedUserList = props.route?.params?.selectedUsers;
+
+  // Get conversation name from route params (if any)
+  const conversationName = props.route?.params?.conversationName;
+
   // Current user data from redux store
   const userData = useSelector((state) => state.auth.userData);
 
@@ -58,17 +64,25 @@ const ConversationsList = (props) => {
 
   // Navigate to conversation screen, adding selected users to the conversation
   useEffect(() => {
-    if (!selectedUser) {
+    if (!selectedUser && !selectedUserList) {
       return;
     }
 
     // Create new chat data with participants
-    const chatUsers = [selectedUser, userData.uid];
+    const chatUsers = selectedUserList || [selectedUser, userData.uid];
+    if (!chatUsers.includes(userData.uid)) {
+      chatUsers.push(userData.uid);
+    }
 
     // Pass new chat data to conversation screen
     const navigationProps = {
       newChatData: { users: chatUsers },
+      isGroupChat: selectedUserList ? true : false,
     };
+
+    if (conversationName) {
+      navigationProps.conversationName = conversationName;
+    }
 
     // Navigate to conversation screen
     props.navigation.navigate("Conversation", navigationProps);
@@ -77,7 +91,7 @@ const ConversationsList = (props) => {
   // Render Conversations List Screen
   return (
     <PageContainer>
-      <ScreenTitle text="Conversationsss"/>
+      <ScreenTitle text="Conversations"/>
 
       <View>
         <TouchableOpacity onPress={() => props.navigation.navigate("NewConversation", {isGroupChat: true} )}>

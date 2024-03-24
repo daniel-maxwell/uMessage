@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from "react-redux";
 
 // Local Imports
@@ -25,6 +26,7 @@ const ProfilePicture = (props) => {
   const [img, setImg] = useState(src); // Manage profile picture state
   const [loading, setLoading] = useState(false); // Manage loading state
   const showEditIcon = props.showEditIcon && props.showEditIcon === true; // Show / Hide edit icon
+  const showRemoveIcon = props.showRemoveIcon && props.showRemoveIcon === true; // Show / Hide edit icon
 
   // Update the user's profile picture
   const updateProfilePicture = async () => {
@@ -64,11 +66,11 @@ const ProfilePicture = (props) => {
   };
 
   // Determines if the profile picture is clickable
-  const Container = showEditIcon ? TouchableOpacity : View;
+  const Container = props.onPress || showEditIcon ? TouchableOpacity : View;
 
   // Render the profile picture component
   return (
-    <Container onPress={updateProfilePicture}>
+    <Container style={props.style} onPress={props.onPress || updateProfilePicture}>
       {loading ? (
         <View style={styles.loadingContainer} width={props.size} height={props.size}>
           <ActivityIndicator size="small" color={colours.primary} aria-label="Loading indicator"/>
@@ -88,6 +90,15 @@ const ProfilePicture = (props) => {
         showEditIcon && !loading && (
           <View style={styles.editIconContainer} aria-label="Profile Picture Edit Button">
             <FontAwesome name="pencil" size={15} color="#3b444b" />
+          </View>
+        )
+      }
+
+      {
+        // Render edit icon if showEditIcon is true
+        showRemoveIcon && !loading && (
+          <View style={styles.removeIconContainer} aria-label="Remove user button">
+            <FontAwesome name="close" size={14} color="black" style={styles.cross}/>
           </View>
         )
       }
@@ -118,7 +129,22 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderRadius: 200,
   },
-
+  removeIconContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    padding: 1,
+    paddingHorizontal: 3,
+    backgroundColor: colours.offWhite,
+    borderColor: colours.lightGrey,
+    borderWidth: 0.8,
+    borderRadius: 200,
+    opacity: 0.8,
+  },
+  cross: {
+    marginBottom: 1.5,
+    opacity: 0.9,
+  },
 });
 
 export default ProfilePicture;

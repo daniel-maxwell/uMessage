@@ -22,7 +22,7 @@ import { setConversationsData } from "../store/conversationSlice";
 import Colours from "../constants/Colours";
 import Styles from "../constants/Styles";
 import { setSavedUsers } from "../store/userSlice";
-import { setConversationMessages } from "../store/messagesSlice";
+import { setConversationMessages, setLikedMessages } from "../store/messagesSlice";
 
 const Tab = createBottomTabNavigator(); // Bottom Tab Navigator
 const Stack = createNativeStackNavigator(); // Stack Navigator
@@ -223,6 +223,13 @@ const HomeNavigator = () => {
         // Stops loading if there are no chats
         if (chatCount === 0) setLoading(false);
       }
+    });
+
+    const userLikedMessagesRef = child(databaseRef, `userLikedMessages/${userData.uid}`);
+    refList.push(userLikedMessagesRef);
+    onValue(userLikedMessagesRef, (querySnapshot) => {
+      const likedMessages = querySnapshot.val() ?? {};
+      dispatch(setLikedMessages({ likedMessages }));
     });
 
     return () => {
