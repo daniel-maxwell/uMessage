@@ -26,7 +26,6 @@ const NewConversation = (props) => {
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const [conversationName, setConversationName] = useState(''); // Conversation name state
   const [selectedUsers, setSelectedUsers] = useState([]); // Selected users state
-  console.log(users)
 
   const userData = useSelector((state) => state.auth.userData); // User data from redux store
   const savedUsers = useSelector((state) => state.users.savedUsers); // Saved users from redux store
@@ -149,7 +148,7 @@ const NewConversation = (props) => {
                 onContentSizeChange={() => selectedUsersFlatList.current.scrollToEnd()}
                 renderItem={itemData => {
                   const uid = itemData.item;
-                  const userData = users[uid];
+                  const userData = savedUsers[uid];
                   return (
                     <ProfilePicture
                       style={styles.selectedUserStyle}
@@ -292,11 +291,11 @@ const styles = StyleSheet.create({
   },
   selectedUsersList: {
     height: "100%",
-    paddingTop: 15
+    paddingTop: 0
   },
   selectedUserStyle: {
     marginRight: 10,
-    marginBottom: 15,
+    marginBottom: 0,
   }
 
 });
