@@ -41,6 +41,12 @@ const sendMessage = async (conversationId, senderId, messageContents, imgUrl, re
       text: messageContents
     };
 
+    // If there is a replyTo value, add it to the message data
+    if (replyTo) {
+      messageData.replyTo = replyTo;
+    }
+
+    // If there is an image URL, add it to the message data
     if (imgUrl) {
       messageData.imgUrl = imgUrl;
     }
@@ -59,8 +65,8 @@ const sendMessage = async (conversationId, senderId, messageContents, imgUrl, re
 }
 
 // Sends a (text-only) message from one user to another
-export const sendMessageTextOnly = async (conversationId, senderId, messageContents) => {
-  await sendMessage(conversationId, senderId, messageContents, null, null);
+export const sendMessageTextOnly = async (conversationId, senderId, messageContents, replyTo) => {
+  await sendMessage(conversationId, senderId, messageContents, null, replyTo);
 };
 
 export const likeMessage = async (messageId, conversationId, userId) => {
@@ -85,7 +91,7 @@ export const likeMessage = async (messageId, conversationId, userId) => {
     }
   }
   catch (error) {
-    console.log('Error liking message:', error);
+    alert("Error liking message: " + error.message);
   }
 };
 

@@ -40,7 +40,7 @@ const MenuItem = (props) => {
     <MenuOption onSelect={props.onSelect}>
       <View style={styles.menuItemContainer}>
         <Text style={styles.menuText}>{props.text}</Text>
-        <Icon name={props.icon} size={18} color={props.iconColor} />
+        <Icon name={props.icon} size={props.iconSize} color={props.iconColor} />
       </View>
     </MenuOption>
   );
@@ -49,13 +49,22 @@ const MenuItem = (props) => {
 // Message Bubble Component
 const MessageBubble = (props) => {
   // Extract type, text, imageUrl, time from props
-  const { type, text, imageUrl, time, messageId, conversationId, userId } = props;
+  const {
+    type,
+    text,
+    imageUrl,
+    time,
+    messageId,
+    conversationId,
+    userId,
+    setReply,
+    replyingTo
+  } = props;
 
   const likedMessages = useSelector(
     (state) => state.messages.likedMessages[conversationId] ?? {}
   );
-
-  console.log(likedMessages);
+  const savedUsers = useSelector(state => state.users.savedUsers);
 
   const bubbleStyles = { ...styles.bubbleContainer };
   const messageStyles = { ...styles.messageText };
@@ -64,7 +73,6 @@ const MessageBubble = (props) => {
 
   const menuRef = useRef(null);
   const menuId = useRef(uuid.v4());
-  console.log(menuId.current);
 
   let Container = View;
   let isUserMesage = false;
@@ -95,6 +103,10 @@ const MessageBubble = (props) => {
       isUserMesage = true;
       break;
 
+    case "reply":
+      bubbleStyles.backgroundColor = '#F2F2F2';
+      break;
+
     case "error":
       bubbleStyles.backgroundColor = Colours.red;
       messageStyles.color = "white";
@@ -105,9 +117,14 @@ const MessageBubble = (props) => {
       break;
   }
 
+  // Copy message to clipboard
   const copyToClipboard = async (text) => await Clipboard.setStringAsync(text);
 
+  // Check if message is liked
   const isLiked = isUserMesage && likedMessages[messageId] !== undefined;
+
+  // Check if message is replying to another message
+  const replyingToUser = replyingTo && savedUsers[replyingTo.sender];
 
   // Render Message Bubble
   return (
@@ -119,6 +136,16 @@ const MessageBubble = (props) => {
         style={{ width: "100%" }}
       >
         <View style={bubbleStyles}>
+          {
+            replyingToUser && (
+              <MessageBubble
+                type='reply'
+                text={replyingTo.text}
+                name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
+              />
+            )
+          }
+
           {!imageUrl && <Text style={messageStyles}>{text}</Text>}
           {imageUrl && (
             <Image source={{ uri: imageUrl }} style={styles.messageImage} />
@@ -127,23 +154,45 @@ const MessageBubble = (props) => {
           {timeStr && (
             <View style={styles.timeContainer}>
               <Text style={styles.messageTime}>{timeStr}</Text>
-              { isLiked && <Ionicons name="heart" size={16} color="red" style={{marginLeft: 5}} /> }
+              {isLiked && (
+                <Ionicons
+                  name="heart"
+                  size={16}
+                  color="red"
+                  style={{ marginLeft: 5 }}
+                />
+              )}
             </View>
           )}
           <Menu name={menuId.current} ref={menuRef}>
             <MenuTrigger />
-            <MenuOptions>
+            <MenuOptions
+              optionsContainerStyle={{
+                width: 110,
+                borderRadius: 5,
+                backgroundColor: Colours.offWhite,
+              }}
+            >
               <MenuItem
                 text="Copy"
                 icon={"copy-outline"}
-                iconColor={"black"}
+                iconColor={Colours.textColour}
+                iconSize={18}
                 onSelect={() => copyToClipboard(text)}
               />
               <MenuItem
-                text={`${isLiked ? 'Unlike' : 'Like'} message`}
-                icon={"heart"}
-                iconColor={isLiked ? "red" : Colours.grey}
+                text={`${isLiked ? "Unlike" : "Like"}`}
+                icon={`${isLiked ? "heart" : "heart-outline"}`}
+                iconColor={isLiked ? "red" : Colours.textColour}
+                iconSize={20}
                 onSelect={() => likeMessage(messageId, conversationId, userId)}
+              />
+              <MenuItem
+                text={"Reply"}
+                icon={"arrow-undo-outline"}
+                iconColor={Colours.textColour}
+                iconSize={20}
+                onSelect={setReply}
               />
             </MenuOptions>
           </Menu>
@@ -158,6 +207,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     justifyContent: "center",
+    paddingTop: 10,
   },
   bubbleContainer: {
     padding: 5,
@@ -165,7 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colours.offWhite,
     borderRadius: 9,
     marginBottom: 10,
-    borderColor: "e2dacc",
+    borderColor: "#9c9c9c",
     borderWidth: 0.75,
   },
   messageText: {
