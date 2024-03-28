@@ -59,8 +59,8 @@ const NewConversation = (props) => {
                   color={isGroupChatDisabled ? Colours.lightGrey : undefined}
                   onPress={() => {
                     props.navigation.navigate("ChatList", {
-                      selectedUsers: selectedUsers,
-                      conversationName: conversationName
+                      selectedUsers,
+                      conversationName
                     });
                   }}
                 ></Item>
@@ -132,8 +132,8 @@ const NewConversation = (props) => {
                   style={styles.textbox}
                   placeholder="Enter a group name..."
                   keyboardType="email-address"
-                  value={conversationName}
-                  onChangeText={(text) => setConversationName(text)}
+                  // value={conversationName}
+                  onChangeText={text => setConversationName(text)}
                 />
               </View>
             </View>

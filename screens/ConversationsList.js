@@ -68,20 +68,38 @@ const ConversationsList = (props) => {
       return;
     }
 
-    // Create new chat data with participants
-    const chatUsers = selectedUserList || [selectedUser, userData.uid];
-    if (!chatUsers.includes(userData.uid)) {
-      chatUsers.push(userData.uid);
+    let conversationData;
+    let navigationProps;
+
+    // Check if conversation already exists
+    if (selectedUser) {
+      conversationData = memoizedUserConversations.find(
+        cd => !cd.isGroupChat && cd.users.includes(selectedUser));
     }
 
-    // Pass new chat data to conversation screen
-    const navigationProps = {
-      newChatData: { users: chatUsers },
-      isGroupChat: selectedUserList ? true : false,
-    };
+    // If conversation exists, navigate to it
+    if (conversationData) {
+      navigationProps = { conversationId: conversationData.key }
+    }
+    else { // Otherwise...
+      // Create new chat data with participants
+      const chatUsers = selectedUserList || [selectedUser, userData.uid];
+      if (!chatUsers.includes(userData.uid)) {
+        chatUsers.push(userData.uid);
+      }
 
-    if (conversationName) {
-      navigationProps.conversationName = conversationName;
+      // Pass new chat data to conversation screen
+      navigationProps = {
+        newChatData: {
+          users: chatUsers,
+          isGroupChat: selectedUserList !== undefined,
+          conversationName
+        },
+      };
+      // If conversation name exists, add it to navigation props
+      if (conversationName) {
+        navigationProps.conversationName = conversationName;
+      }
     }
 
     // Navigate to conversation screen
@@ -104,19 +122,31 @@ const ConversationsList = (props) => {
         renderItem={(itemData) => {
           const conversationData = itemData.item;
           const conversationId = conversationData.key;
-          const otherUserId = conversationData.users.find(
-            (id) => id !== userData.uid
-          );
-          const otherUser = savedUsers[otherUserId];
-          if (!otherUser) {
-            return;
+
+          const isGroupChat = conversationData.isGroupChat;
+          let title = "";
+          let image = "";
+
+          if (isGroupChat) {
+            title = conversationData.conversationName;
           }
-          const profilePic = otherUser.profilePicture;
+          else {
+            const otherUserId = conversationData.users.find(
+              (id) => id !== userData.uid
+            );
+            const otherUser = savedUsers[otherUserId];
+            if (!otherUser) {
+              return;
+            }
+            title = `${otherUser.firstName} ${otherUser.lastName}`;
+            image = otherUser.profilePicture;
+          }
+
           return (
             <DataItem
-              title={`${otherUser.firstName} ${otherUser.lastName}`}
+              title={title}
               subtitle={conversationData.lastMessage || "New chat"}
-              img={profilePic}
+              img={image}
               onPress={() => props.navigation.navigate("Conversation", {conversationId})}
             ></DataItem>
           );

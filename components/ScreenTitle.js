@@ -23,6 +23,5 @@ const styles = StyleSheet.create({
     fontFamily: "bold",
     fontSize: 24,
     color: colours.textColour,
-
   },
 });

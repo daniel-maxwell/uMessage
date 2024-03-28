@@ -96,10 +96,14 @@ const Conversation = (props) => {
       : "Conversation";
   };
 
+  // Set title for conversation screen
+  const title = conversationData.conversationName ?? getTitle();
+
   // Sets page title
   useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: getTitle(),
+      headerTitle: title,
+      headerTitleAlign: 'center',
     });
     setParticipants(conversationData.users);
   }, [participants]);
@@ -235,6 +239,9 @@ const Conversation = (props) => {
                   }
                   renderItem={(itemData) => {
                     const messageData = itemData.item;
+                    const isOwnMessage = messageData.sender === userData.uid;
+                    const sender = messageData.sender && savedUsers[messageData.sender]
+                    const name = sender && `${sender.firstName} ${sender.lastName}`
                     return (
                       <MessageBubble
                         type={
@@ -245,6 +252,7 @@ const Conversation = (props) => {
                         messageId={messageData.key}
                         userId={userData.uid}
                         conversationId={conversationId}
+                        name={!conversationData.isGroupChat || isOwnMessage ? undefined : name}
                         imageUrl={messageData.imgUrl}
                         aria-label="message bubble"
                         setReply={() => setReplyingTo(messageData)}
