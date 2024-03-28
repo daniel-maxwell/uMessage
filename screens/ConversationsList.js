@@ -112,7 +112,7 @@ const ConversationsList = (props) => {
       <ScreenTitle text="Conversations"/>
 
       <View>
-        <TouchableOpacity onPress={() => props.navigation.navigate("NewConversation", {isGroupChat: true} )}>
+        <TouchableOpacity onPress={() => props.navigation.navigate("NewConversation", {isGroupChat: true})}>
           <Text style={styles.newGroupText} aria-label="Create Group Chat Button">New Group</Text>
         </TouchableOpacity>
       </View>

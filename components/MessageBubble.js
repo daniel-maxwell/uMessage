@@ -58,7 +58,8 @@ const MessageBubble = (props) => {
     conversationId,
     userId,
     setReply,
-    replyingTo
+    replyingTo,
+    name
   } = props;
 
   const likedMessages = useSelector(
@@ -136,6 +137,10 @@ const MessageBubble = (props) => {
         style={{ width: "100%" }}
       >
         <View style={bubbleStyles}>
+          {
+            name &&
+            <Text style={styles.name}>{name}</Text>
+          }
           {
             replyingToUser && (
               <MessageBubble
